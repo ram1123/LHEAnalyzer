@@ -3,7 +3,6 @@ Based on code by Nahan
 
 Date: 24/08/2014
 	
-	Tring to add info about number of electrons and different types of quark.
 */
 
 #include "LHEF.h"
