@@ -221,7 +221,6 @@ int main (int argc, char **argv) {
     tree->Branch("j3genEta" 		,&j3genEta,		"j3genEta/F");
     tree->Branch("j3genTheta" 		,&j3genTheta,		"j3genTheta/F");
     tree->Branch("j3genPhi" 		,&j3genPhi,		"j3genPhi/F");
-//*/
 
     tree->Branch("isSignal",&isSignal,"isSignal/I");
     tree->Branch("isMuMinus",&isMuMinus,"isMuMinus/I");
