@@ -63,7 +63,6 @@ double deltaPhi (double phi1, double phi2)
 
 int main (int argc, char **argv) {
     
-//    gSystem->Load("libPhysics");
       TFile file(argv[2],"RECREATE");
     TTree* tree = new TTree("tree","tree");
     
@@ -73,7 +72,6 @@ int main (int argc, char **argv) {
     int genMuonNumMuon, genMuonCharge, genEleNumEle,  genEleCharge; 
     float   genMuonPx, genMuonPy, genMuonPz, genMuonPt, genMuonP3, genMuonEt, genMuonMt, genMuonMass, genMuonEnergy, genMuonEta, genMuonTheta, genMuonPhi, genElePx, genElePy, genElePz, genElePt, genEleP3, genEleEt, genEleMt, genEleMass, genEleEnergy, genEleEta, genEleTheta, genElePhi, mgenPx, mgenPy, mgenPz, mgenPt, mgenP3, mgenEt, mgenMt, mgenMass, mgenEnergy, mgenEta, mgenTheta, mgenPhi;
 
-//    std::vector<float> jgenPx, jgenPy, jgenPz, jgenPt, jgenP3, jgenEt, jgenMt, jgenMass, jgenEnergy, jgenEta, jgenTheta, jgenPhi; 
     
     float j0genPx, j0genPy, j0genPz, j0genPt, j0genP3, j0genEt, j0genMt, j0genMass, j0genEnergy, j0genEta, j0genTheta, j0genPhi, j1genPx, j1genPy, j1genPz, j1genPt, j1genP3, j1genEt, j1genMt, j1genMass, j1genEnergy, j1genEta, j1genTheta, j1genPhi, j2genPx, j2genPy, j2genPz, j2genPt, j2genP3, j2genEt, j2genMt, j2genMass, j2genEnergy, j2genEta, j2genTheta, j2genPhi, j3genPx, j3genPy, j3genPz, j3genPt, j3genP3, j3genEt, j3genMt, j3genMass, j3genEnergy, j3genEta, j3genTheta, j3genPhi;
 
@@ -159,19 +157,6 @@ int main (int argc, char **argv) {
     tree->Branch("mgenEta" 		,&mgenEta,		"mgenEta/F");
     tree->Branch("mgenTheta" 		,&mgenTheta,		"mgenTheta/F");
     tree->Branch("mgenPhi" 		,&mgenPhi,		"mgenPhi/F");
-//    tree->Branch("jgenPx" 		,&jgenPx,		"jgenPx/F");
-//    tree->Branch("jgenPy" 		,&jgenPy,		"jgenPy/F");
-//    tree->Branch("jgenPz" 		,&jgenPz,		"jgenPz/F");
-//    tree->Branch("jgenPt" 		,&jgenPt,		"jgenPt/F");
-//    tree->Branch("jgenP3" 		,&jgenP3,		"jgenP3/F");
-//    tree->Branch("jgenEt" 		,&jgenEt,		"jgenEt/F");
-//    tree->Branch("jgenMt" 		,&jgenMt,		"jgenMt/F");
-//    tree->Branch("jgenMass" 		,&jgenMass,		"jgenMass/F");
-//    tree->Branch("jgenEnergy" 		,&jgenEnergy,		"jgenEnergy/F");
-//    tree->Branch("jgenEta" 		,&jgenEta,		"jgenEta/F");
-//    tree->Branch("jgenTheta" 		,&jgenTheta,		"jgenTheta/F");
-//    tree->Branch("jgenPhi" 		,&jgenPhi,		"jgenPhi/F");
-///*
     tree->Branch("j0genPx" 		,&j0genPx,		"j0genPx/F");
     tree->Branch("j0genPy" 		,&j0genPy,		"j0genPy/F");
     tree->Branch("j0genPz" 		,&j0genPz,		"j0genPz/F");
@@ -534,14 +519,6 @@ int main (int argc, char **argv) {
             i_iqrk_2 = finalQuarksNotW.at(1);                
         }
 
-//        std::cout << "signalFlag = " << signalFlag << std::endl;
-//        std::cout << "isMuMinus = " << isMuMinus << std::endl;        
-//        std::cout << "lep1 = " << bkgReader.hepeup.IDUP.at(i_olep_part) << std::endl;
-//        std::cout << "lep2 = " << bkgReader.hepeup.IDUP.at(i_olep_anti) << std::endl;        
-//        std::cout << "qrk1 = " << bkgReader.hepeup.IDUP.at(i_wqrk_1) << std::endl;
-//        std::cout << "qrk2 = " << bkgReader.hepeup.IDUP.at(i_wqrk_2) << std::endl;        
-//        std::cout << "i-qrk1 = " << bkgReader.hepeup.IDUP.at(i_iqrk_1) << std::endl;
-//        std::cout << "i-qrk2 = " << bkgReader.hepeup.IDUP.at(i_iqrk_2) << std::endl;        
 
         TLorentzVector fs_lep0
         (
@@ -565,18 +542,7 @@ int main (int argc, char **argv) {
          bkgReader.hepeup.PUP.at(i_wqrk_1).at(2), //PG pz
          bkgReader.hepeup.PUP.at(i_wqrk_1).at(3) //PG E
          ) ;
-//	 	jgenPx.push_back( 	 fs_Wqrk0(0)); 
-//		jgenPy.push_back( 	 fs_Wqrk0(1));
-//		jgenPz.push_back( 	 fs_Wqrk0(2));
-//		jgenPt.push_back( 	 fs_Wqrk0.Perp());
-//		jgenP3.push_back( 	 (fs_Wqrk0.Vect()).Mag());
-//		jgenEt.push_back( 	 fs_Wqrk0.Et()); 
-//		jgenMt.push_back( 	 fs_Wqrk0.Mt());
-//		jgenMass.push_back( 	 fs_Wqrk0.M());
-//		jgenEnergy.push_back( 	 fs_Wqrk0(3));
-//		jgenEta .push_back(	 fs_Wqrk0.Eta());
-//		jgenTheta.push_back( 	 fs_Wqrk0.Theta());
-//		jgenPhi .push_back(	 fs_Wqrk0.Phi());
+
 
         TLorentzVector fs_Wqrk1
         (
@@ -585,18 +551,7 @@ int main (int argc, char **argv) {
          bkgReader.hepeup.PUP.at(i_wqrk_2).at(2), //PG pz
          bkgReader.hepeup.PUP.at(i_wqrk_2).at(3) //PG E
          ) ;
-//	 	jgenPx.push_back( 	 fs_Wqrk1(0)); 
-//		jgenPy.push_back( 	 fs_Wqrk1(1));
-//		jgenPz.push_back( 	 fs_Wqrk1(2));
-//		jgenPt.push_back( 	 fs_Wqrk1.Perp());
-//		jgenP3.push_back( 	 (fs_Wqrk1.Vect()).Mag());
-//		jgenEt.push_back( 	 fs_Wqrk1.Et()); 
-//		jgenMt.push_back( 	 fs_Wqrk1.Mt());
-//		jgenMass.push_back( 	 fs_Wqrk1.M());
-//		jgenEnergy.push_back( 	 fs_Wqrk1(3));
-//		jgenEta .push_back(	 fs_Wqrk1.Eta());
-//		jgenTheta.push_back( 	 fs_Wqrk1.Theta());
-//		jgenPhi .push_back(	 fs_Wqrk1.Phi());
+
 
         TLorentzVector fs_Iqrk0
         (
@@ -605,18 +560,6 @@ int main (int argc, char **argv) {
          bkgReader.hepeup.PUP.at(i_iqrk_1).at(2), //PG pz
          bkgReader.hepeup.PUP.at(i_iqrk_1).at(3) //PG E
          ) ;
-//	 	jgenPx.push_back( 	 fs_Iqrk0(0)); 
-//		jgenPy.push_back( 	 fs_Iqrk0(1));
-//		jgenPz.push_back( 	 fs_Iqrk0(2));
-//		jgenPt.push_back( 	 fs_Iqrk0.Perp());
-//		jgenP3.push_back( 	 (fs_Iqrk0.Vect()).Mag());
-//		jgenEt.push_back( 	 fs_Iqrk0.Et()); 
-//		jgenMt.push_back( 	 fs_Iqrk0.Mt());
-//		jgenMass.push_back( 	 fs_Iqrk0.M());
-//		jgenEnergy.push_back( 	 fs_Iqrk0(3));
-//		jgenEta .push_back(	 fs_Iqrk0.Eta());
-//		jgenTheta.push_back( 	 fs_Iqrk0.Theta());
-//		jgenPhi .push_back(	 fs_Iqrk0.Phi());
 
         TLorentzVector fs_Iqrk1
         (
@@ -625,19 +568,6 @@ int main (int argc, char **argv) {
          bkgReader.hepeup.PUP.at(i_iqrk_2).at(2), //PG pz
          bkgReader.hepeup.PUP.at(i_iqrk_2).at(3) //PG E
          ) ;
-//	 	jgenPx.push_back( 	 fs_Iqrk1(0)); 
-//		jgenPy.push_back( 	 fs_Iqrk1(1));
-//		jgenPz.push_back( 	 fs_Iqrk1(2));
-//		jgenPt.push_back( 	 fs_Iqrk1.Perp());
-//		jgenP3.push_back( 	 (fs_Iqrk1.Vect()).Mag());
-//		jgenEt.push_back( 	 fs_Iqrk1.Et()); 
-//		jgenMt.push_back( 	 fs_Iqrk1.Mt());
-//		jgenMass.push_back( 	 fs_Iqrk1.M());
-//		jgenEnergy.push_back( 	 fs_Iqrk1(3));
-//		jgenEta .push_back(	 fs_Iqrk1.Eta());
-//		jgenTheta.push_back( 	 fs_Iqrk1.Theta());
-//		jgenPhi .push_back(	 fs_Iqrk1.Phi());
-
         
 
         TLorentzVector p4_WHad = fs_Wqrk0 + fs_Wqrk1;
@@ -649,7 +579,6 @@ int main (int argc, char **argv) {
                       a_costheta1, a_costheta2, a_Phi, a_costhetastar, a_Phi1);
         
 	
-//	/*
 		j0genPx 	= fs_Iqrk0(0); 
 		j0genPy 	= fs_Iqrk0(1);
 		j0genPz 	= fs_Iqrk0(2);
@@ -726,18 +655,6 @@ int main (int argc, char **argv) {
 	bQuarkStatus.clear();
 	tQuarkStatus.clear();
 
-//	jgenPx.clear();
-//	jgenPy.clear();
-//	jgenPz.clear();
-//	jgenPt.clear();
-//	jgenP3.clear();
-//	jgenEt.clear();
-//	jgenMt.clear();
-//	jgenMass.clear();
-//	jgenEnergy.clear();
-//	jgenEta.clear();
-//	jgenTheta.clear();
-//	jgenPhi.clear(); 
 	Lepton.clear();
 	Muon.clear();
 	LeptonStatus.clear();
