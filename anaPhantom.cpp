@@ -1,4 +1,21 @@
-// for the paper with Bho
+/*                                                                                                                                             
+ * =====================================================================================
+ *
+ *       Filename:  anaPhantom.C
+ *
+ *    Description:  This macro reades the lhe file and makes a root file.
+ *
+ *        Version:  1.0
+ *        Created:  Friday 02 January 2015 04:45:09  IST
+ *       Revision:  none
+ *       Compiler:  gcc
+ *
+ *         Author:  Nhan
+ *	Edited By:  Ramkrishna Sharma 
+ *   Organization:  CERN
+ *
+ * =====================================================================================
+ */
 
 
 #include "LHEF.h"
