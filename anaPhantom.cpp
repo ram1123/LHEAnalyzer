@@ -80,9 +80,30 @@ int main (int argc, char **argv) {
 
     TClonesArray *LMuon = new TClonesArray("TLorentzVector");
     TClonesArray &aLMuon = *LMuon;
+    TClonesArray *LOutParticle = new TClonesArray("TLorentzVector");
+    TClonesArray &aLOutParticle = *LOutParticle;
+    TClonesArray *LInParticle = new TClonesArray("TLorentzVector");
+    TClonesArray &aLInParticle = *LInParticle;
+    TClonesArray *LIntermediateParticle = new TClonesArray("TLorentzVector");
+    TClonesArray &aLIntermediateParticle = *LIntermediateParticle;
+    TClonesArray *LLeptons = new TClonesArray("TLorentzVector");
+    TClonesArray &aLLeptons = *LLeptons;
+    TClonesArray *LQuarks = new TClonesArray("TLorentzVector");
+    TClonesArray &aLQuarks = *LQuarks;
+    TClonesArray *LTops = new TClonesArray("TLorentzVector");
+    TClonesArray &aLTops = *LTops;
 
     
-    tree->Branch("Muon",&LMuon);
+    tree->Branch("LMuon","TClonesArray", &LMuon, 32000,0);
+    tree->Branch("LOutParticle","TClonesArray", &LOutParticle, 32000,0);
+    tree->Branch("LInParticle","TClonesArray", &LInParticle, 32000,0);
+    tree->Branch("LIntermediateParticle","TClonesArray", &LIntermediateParticle, 32000,0);
+    tree->Branch("LLeptons","TClonesArray", &LLeptons, 32000,0);
+    tree->Branch("LQuarks","TClonesArray", &LQuarks, 32000,0);
+    tree->Branch("LEle","TClonesArray", &LEle, 32000,0);
+    tree->Branch("LTops","TClonesArray", &LTops, 32000,0);
+
+
     tree->Branch("mWW",&mWW,"mWW/F");
     tree->Branch("mWLep",&mWLep,"mWLep/F");
     tree->Branch("mWHad",&mWHad,"mWHad/F");
@@ -135,20 +156,18 @@ int main (int argc, char **argv) {
 //            << "\n" ;
            if (bkgReader.hepeup.ISTUP.at (iPart) == 1 && abs(bkgReader.hepeup.IDUP.at(iPart)) == 13 )
 		{
-		TLorentzVector muon
-		 (
-		 bkgReader.hepeup.PUP.at(iPart).at(0),
-		 bkgReader.hepeup.PUP.at(iPart).at(1),
-		 bkgReader.hepeup.PUP.at(iPart).at(2),
-		 bkgReader.hepeup.PUP.at(iPart).at(3)
-		 );
-		 new(aLMuon[iPart]) TLorentzVector(muon(0),muon(1),muon(2),muon(3));
+		 new(aLMuon[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
 		}
 
+           if (bkgReader.hepeup.ISTUP.at (iPart) == 1 && abs(bkgReader.hepeup.IDUP.at(iPart)) == 11 )
+		{
+		 new(aLEle[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
+		}
  
             //PG incoming particle          
             if (bkgReader.hepeup.ISTUP.at (iPart) == -1){
                 initialQuarks.push_back (iPart) ;
+		 new(aLInParticle[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
             }
 
             //PG outgoing particles          
@@ -162,22 +181,27 @@ int main (int argc, char **argv) {
                     abs (bkgReader.hepeup.IDUP.at (iPart)) == 16)     //PG neutrino                    
                     {
                     leptons.push_back (iPart) ;
+		 new(aLLeptons[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
                     } //PG leptons
                 else
                     {
                     finalQuarks.push_back (iPart) ;
+		 new(aLQuarks[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
                     }
                 
+		 new(aLOutParticle[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
             } 
             
             //PG intermediates
             if (bkgReader.hepeup.ISTUP.at(iPart) == 2){
                 intermediates.push_back (iPart) ;
+		 new(aLIntermediateParticle[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
             }
             
             //PG tops
             if (abs(bkgReader.hepeup.IDUP.at(iPart)) == 6){
                 tops.push_back (iPart) ;
+		 new(aLTops[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
             }
         } //PG loop over particles in the event
     
