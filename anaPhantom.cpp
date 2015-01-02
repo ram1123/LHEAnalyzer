@@ -1,9 +1,5 @@
-/*
-Based on code by Nahan
+// for the paper with Bho
 
-Date: 24/08/2014
-	
-*/
 
 #include "LHEF.h"
 #include "TROOT.h"
@@ -13,10 +9,15 @@ Date: 24/08/2014
 #include "THStack.h"
 #include "TCanvas.h"
 #include "TLorentzVector.h"
-
 #include <cmath>
 #include "TTree.h"
-#include <vector>
+#include "TClonesArray.h"
+//#include "libPhysics.so"
+#include "TApplication.h"
+//#include "/cvmfs/cms.cern.ch/slc6_amd64_gcc491/lcg/root/5.34.22//lib/libPhysics.so"
+//#include "hFactory.h"
+//#include "h2Factory.h"
+//#include "hFunctions.h"
 
 /*
  
@@ -44,6 +45,8 @@ Date: 24/08/2014
  7 -- bkg qcd selezionati
  8 -- bkg qcd persi
  6 -- bkg qcd totale
+ 
+ 
  */
 
 void computeAngles(TLorentzVector thep4H, TLorentzVector thep4Z1, TLorentzVector thep4M11, TLorentzVector thep4M12, TLorentzVector thep4Z2, TLorentzVector thep4M21, TLorentzVector thep4M22, double& costheta1, double& costheta2, double& Phi, double& costhetastar, double& Phi1);
@@ -63,40 +66,23 @@ double deltaPhi (double phi1, double phi2)
 
 int main (int argc, char **argv) {
     
-      TFile file(argv[2],"RECREATE");
+    //gSystem->Load("libPhysics");
+
+ TApplication a("a", 0, 0); // just to make sure that the autoloading of ROOT libraries works
+
+    TFile file(argv[2],"RECREATE");
+ //   TFile file("phantom.root","RECREATE");
     TTree* tree = new TTree("tree","tree");
     
     float mWW, mWLep, mWHad, costheta1, costheta2, costhetastar, phi, phi1;
-    int NumberOfBQuark,NumberOftQuark,NumberOfLeptonsAndNu,NumberOfMuonsAndNu;
-    
-    int genMuonNumMuon, genMuonCharge, genEleNumEle,  genEleCharge; 
-    float   genMuonPx, genMuonPy, genMuonPz, genMuonPt, genMuonP3, genMuonEt, genMuonMt, genMuonMass, genMuonEnergy, genMuonEta, genMuonTheta, genMuonPhi, genElePx, genElePy, genElePz, genElePt, genEleP3, genEleEt, genEleMt, genEleMass, genEleEnergy, genEleEta, genEleTheta, genElePhi, mgenPx, mgenPy, mgenPz, mgenPt, mgenP3, mgenEt, mgenMt, mgenMass, mgenEnergy, mgenEta, mgenTheta, mgenPhi;
-
-    
-    float j0genPx, j0genPy, j0genPz, j0genPt, j0genP3, j0genEt, j0genMt, j0genMass, j0genEnergy, j0genEta, j0genTheta, j0genPhi, j1genPx, j1genPy, j1genPz, j1genPt, j1genP3, j1genEt, j1genMt, j1genMass, j1genEnergy, j1genEta, j1genTheta, j1genPhi, j2genPx, j2genPy, j2genPz, j2genPt, j2genP3, j2genEt, j2genMt, j2genMass, j2genEnergy, j2genEta, j2genTheta, j2genPhi, j3genPx, j3genPy, j3genPz, j3genPt, j3genP3, j3genEt, j3genMt, j3genMass, j3genEnergy, j3genEta, j3genTheta, j3genPhi;
-
-    float dEtajj, dEtaWW, dPhijj, dPhiWW,mjj;
+    float dEtajj, dPhijj, mjj;
     int isSignal,isMuMinus;
-    std::vector<int> ParticleOut,ParticleIn,ParticleIntermediate,bQuark,tQuark,tQuarkStatus,bQuarkStatus,Lepton,Muon,LeptonStatus,MuonStatus,LeptonpdgId;
-    
-    int tQuarkCount = 0, bQuarkCount = 0, LepCount = 0, MuonCount = 0;
 
-    tree->Branch("ParticleIn",&ParticleIn);
-    tree->Branch("ParticleIntermediate",&ParticleIntermediate);
-    tree->Branch("ParticleOut",&ParticleOut);
-    tree->Branch("Lepton",&Lepton);
-    tree->Branch("LeptonStatus",&LeptonStatus);
-    tree->Branch("LeptonpdgId",&LeptonpdgId);
-    tree->Branch("Muon",&Muon);
-    tree->Branch("MuonStatus",&MuonStatus);
-    tree->Branch("NumberOfLeptonsAndNu",&NumberOfLeptonsAndNu,"NumberOfLeptonsAndNu/I");
-    tree->Branch("NumberOfMuonsAndNu",&NumberOfMuonsAndNu,"NumberOfMuonsAndNu/I");
-    tree->Branch("bQuark",&bQuark);
-    tree->Branch("NumberOfBQuark",&NumberOfBQuark,"NumberOfBQuark/I");
-    tree->Branch("bQuarkStatus",&bQuarkStatus);
-    tree->Branch("tQuark",&tQuark);
-    tree->Branch("NumberOftQuark",&NumberOftQuark,"NumberOftQuark/I");
-    tree->Branch("tQuarkStatus",&tQuarkStatus);
+    TClonesArray *LMuon = new TClonesArray("TLorentzVector");
+    TClonesArray &aLMuon = *LMuon;
+
+    
+    tree->Branch("Muon",&LMuon);
     tree->Branch("mWW",&mWW,"mWW/F");
     tree->Branch("mWLep",&mWLep,"mWLep/F");
     tree->Branch("mWHad",&mWHad,"mWHad/F");
@@ -106,106 +92,9 @@ int main (int argc, char **argv) {
     tree->Branch("phi",&phi,"phi/F");
     tree->Branch("phi1",&phi1,"phi1/F");
     tree->Branch("dEtajj",&dEtajj,"dEtajj/F");
-    tree->Branch("dEtaWW",&dEtaWW,"dEtaWW/F");
     tree->Branch("dPhijj",&dPhijj,"dPhijj/F");
-    tree->Branch("dPhiWW",&dPhiWW,"dPhiWW/F");
     tree->Branch("mjj",&mjj,"mjj/F");
     
-    tree->Branch("genMuonNumMuon" 	,&genMuonNumMuon,	"genMuonNumMuon/I");
-    tree->Branch("genMuonCharge" 	,&genMuonCharge,	"genMuonCharge/I");
-    tree->Branch("genMuonPx" 		,&genMuonPx,		"genMuonPx/F");
-    tree->Branch("genMuonPy" 		,&genMuonPy,		"genMuonPy/F");
-    tree->Branch("genMuonPz" 		,&genMuonPz,		"genMuonPz/F");
-    tree->Branch("genMuonPt" 		,&genMuonPt,		"genMuonPt/F");
-
-//    TClonesArray *LMuon = new TClonesArray("TLorentzVector");
-//    TClonesArray &aaMuon = *LMuon;
-//
-//    tree->Branch("LgenMuon",&LMuon);
-
-    tree->Branch("genMuonP3" 		,&genMuonP3,		"genMuonP3/F");
-    tree->Branch("genMuonEt" 		,&genMuonEt,		"genMuonEt/F");
-    tree->Branch("genMuonMt" 		,&genMuonMt,		"genMuonMt/F");
-    tree->Branch("genMuonMass" 	,&genMuonMass,		"genMuonMass/F");
-    tree->Branch("genMuonEnergy"	,&genMuonEnergy,	"genMuonEnergy/F");
-    tree->Branch("genMuonEta" 		,&genMuonEta,		"genMuonEta/F");
-    tree->Branch("genMuonTheta" 	,&genMuonTheta,		"genMuonTheta/F");
-    tree->Branch("genMuonPhi" 		,&genMuonPhi,		"genMuonPhi/F");
-    tree->Branch("genEleNumEle" 	,&genEleNumEle,		"genEleNumEle/I");
-    tree->Branch("genEleCharge" 	,&genEleCharge,		"genEleCharge/I");
-    tree->Branch("genElePx" 		,&genElePx,		"genElePx/F");
-    tree->Branch("genElePy" 		,&genElePy,		"genElePy/F");
-    tree->Branch("genElePz" 		,&genElePz,		"genElePz/F");
-    tree->Branch("genElePt" 		,&genElePt,		"genElePt/F");
-    tree->Branch("genEleP3" 		,&genEleP3,		"genEleP3/F");
-    tree->Branch("genEleEt" 		,&genEleEt,		"genEleEt/F");
-    tree->Branch("genEleMt" 		,&genEleMt,		"genEleMt/F");
-    tree->Branch("genEleMass" 		,&genEleMass,		"genEleMass/F");
-    tree->Branch("genEleEnergy" 	,&genEleEnergy,		"genEleEnergy/F");
-    tree->Branch("genEleEta" 		,&genEleEta,		"genEleEta/F");
-    tree->Branch("genEleTheta" 	,&genEleTheta,		"genEleTheta/F");
-    tree->Branch("genElePhi" 		,&genElePhi,		"genElePhi/F");
-    tree->Branch("mgenPx" 		,&mgenPx,		"mgenPx/F");
-    tree->Branch("mgenPy" 		,&mgenPy,		"mgenPy/F");
-    tree->Branch("mgenPz" 		,&mgenPz,		"mgenPz/F");
-    tree->Branch("mgenPt" 		,&mgenPt,		"mgenPt/F");
-    tree->Branch("mgenP3" 		,&mgenP3,		"mgenP3/F");
-    tree->Branch("mgenEt" 		,&mgenEt,		"mgenEt/F");
-    tree->Branch("mgenMt" 		,&mgenMt,		"mgenMt/F");
-    tree->Branch("mgenMass" 		,&mgenMass,		"mgenMass/F");
-    tree->Branch("mgenEnergy" 		,&mgenEnergy,		"mgenEnergy/F");
-    tree->Branch("mgenEta" 		,&mgenEta,		"mgenEta/F");
-    tree->Branch("mgenTheta" 		,&mgenTheta,		"mgenTheta/F");
-    tree->Branch("mgenPhi" 		,&mgenPhi,		"mgenPhi/F");
-    tree->Branch("j0genPx" 		,&j0genPx,		"j0genPx/F");
-    tree->Branch("j0genPy" 		,&j0genPy,		"j0genPy/F");
-    tree->Branch("j0genPz" 		,&j0genPz,		"j0genPz/F");
-    tree->Branch("j0genPt" 		,&j0genPt,		"j0genPt/F");
-    tree->Branch("j0genP3" 		,&j0genP3,		"j0genP3/F");
-    tree->Branch("j0genEt" 		,&j0genEt,		"j0genEt/F");
-    tree->Branch("j0genMt" 		,&j0genMt,		"j0genMt/F");
-    tree->Branch("j0genMass" 		,&j0genMass,		"j0genMass/F");
-    tree->Branch("j0genEnergy" 		,&j0genEnergy,		"j0genEnergy/F");
-    tree->Branch("j0genEta" 		,&j0genEta,		"j0genEta/F");
-    tree->Branch("j0genTheta" 		,&j0genTheta,		"j0genTheta/F");
-    tree->Branch("j0genPhi" 		,&j0genPhi,		"j0genPhi/F");
-    tree->Branch("j1genPx" 		,&j1genPx,		"j1genPx/F");
-    tree->Branch("j1genPy" 		,&j1genPy,		"j1genPy/F");
-    tree->Branch("j1genPz" 		,&j1genPz,		"j1genPz/F");
-    tree->Branch("j1genPt" 		,&j1genPt,		"j1genPt/F");
-    tree->Branch("j1genP3" 		,&j1genP3,		"j1genP3/F");
-    tree->Branch("j1genEt" 		,&j1genEt,		"j1genEt/F");
-    tree->Branch("j1genMt" 		,&j1genMt,		"j1genMt/F");
-    tree->Branch("j1genMass" 		,&j1genMass,		"j1genMass/F");
-    tree->Branch("j1genEnergy" 		,&j1genEnergy,		"j1genEnergy/F");
-    tree->Branch("j1genEta" 		,&j1genEta,		"j1genEta/F");
-    tree->Branch("j1genTheta" 		,&j1genTheta,		"j1genTheta/F");
-    tree->Branch("j1genPhi" 		,&j1genPhi,		"j1genPhi/F");
-    tree->Branch("j2genPx" 		,&j2genPx,		"j2genPx/F");
-    tree->Branch("j2genPy" 		,&j2genPy,		"j2genPy/F");
-    tree->Branch("j2genPz" 		,&j2genPz,		"j2genPz/F");
-    tree->Branch("j2genPt" 		,&j2genPt,		"j2genPt/F");
-    tree->Branch("j2genP3" 		,&j2genP3,		"j2genP3/F");
-    tree->Branch("j2genEt" 		,&j2genEt,		"j2genEt/F");
-    tree->Branch("j2genMt" 		,&j2genMt,		"j2genMt/F");
-    tree->Branch("j2genMass" 		,&j2genMass,		"j2genMass/F");
-    tree->Branch("j2genEnergy" 		,&j2genEnergy,		"j2genEnergy/F");
-    tree->Branch("j2genEta" 		,&j2genEta,		"j2genEta/F");
-    tree->Branch("j2genTheta" 		,&j2genTheta,		"j2genTheta/F");
-    tree->Branch("j2genPhi" 		,&j2genPhi,		"j2genPhi/F");
-    tree->Branch("j3genPx" 		,&j3genPx,		"j3genPx/F");
-    tree->Branch("j3genPy" 		,&j3genPy,		"j3genPy/F");
-    tree->Branch("j3genPz" 		,&j3genPz,		"j3genPz/F");
-    tree->Branch("j3genPt" 		,&j3genPt,		"j3genPt/F");
-    tree->Branch("j3genP3" 		,&j3genP3,		"j3genP3/F");
-    tree->Branch("j3genEt" 		,&j3genEt,		"j3genEt/F");
-    tree->Branch("j3genMt" 		,&j3genMt,		"j3genMt/F");
-    tree->Branch("j3genMass" 		,&j3genMass,		"j3genMass/F");
-    tree->Branch("j3genEnergy" 		,&j3genEnergy,		"j3genEnergy/F");
-    tree->Branch("j3genEta" 		,&j3genEta,		"j3genEta/F");
-    tree->Branch("j3genTheta" 		,&j3genTheta,		"j3genTheta/F");
-    tree->Branch("j3genPhi" 		,&j3genPhi,		"j3genPhi/F");
-
     tree->Branch("isSignal",&isSignal,"isSignal/I");
     tree->Branch("isMuMinus",&isMuMinus,"isMuMinus/I");
     
@@ -235,11 +124,6 @@ int main (int argc, char **argv) {
         std::vector<int> intermediates ;
         std::vector<int> tops ;        
         //PG loop over particles in the event
-	bQuarkCount = 0;
-	tQuarkCount = 0;
-	LepCount = 0;
-	MuonCount = 0;
-//	std::cout<<"For event number 1"<<std::endl;
         for (int iPart = 0 ; iPart < bkgReader.hepeup.IDUP.size (); ++iPart){
             
             int mother1 = bkgReader.hepeup.MOTHUP.at(iPart).first;
@@ -249,8 +133,7 @@ int main (int argc, char **argv) {
 //            << "\t mother " << bkgReader.hepeup.MOTHUP.at(iPart).first
 //            << "\t mother id " << bkgReader.hepeup.IDUP.at(mother1)
 //            << "\n" ;
-            
-	if (bkgReader.hepeup.ISTUP.at (iPart) == 1 && abs(bkgReader.hepeup.IDUP.at(iPart)) == 13 )
+           if (bkgReader.hepeup.ISTUP.at (iPart) == 1 && abs(bkgReader.hepeup.IDUP.at(iPart)) == 13 )
 		{
 		TLorentzVector muon
 		 (
@@ -259,102 +142,15 @@ int main (int argc, char **argv) {
 		 bkgReader.hepeup.PUP.at(iPart).at(2),
 		 bkgReader.hepeup.PUP.at(iPart).at(3)
 		 );
-		 //new(aaMuon[iPart]) TLorentzVector(muon(0),muon(1),muon(2),muon(3));
+		 new(aLMuon[iPart]) TLorentzVector(muon(0),muon(1),muon(2),muon(3));
+		}
 
-		 genMuonPx 	= muon(0); 
-		 genMuonPy 	= muon(1);
-		 genMuonPz 	= muon(2);
-		 genMuonPt 	= muon.Perp();
-		 genMuonP3 	= (muon.Vect()).Mag();
-		 genMuonEt 	= muon.Et(); 
-		 genMuonMt 	= muon.Mt();
-		 genMuonMass 	= muon.M();
-		 genMuonEnergy 	= muon(3);
-                 genMuonEta 	= muon.Eta();
-		 genMuonTheta	= muon.Theta();
-                 genMuonPhi 	= muon.Phi();
-		 }
-	if (bkgReader.hepeup.ISTUP.at (iPart) == 1 && abs(bkgReader.hepeup.IDUP.at(iPart)) == 11 )
-		{
-		TLorentzVector ele
-		 (
-		 bkgReader.hepeup.PUP.at(iPart).at(0),
-		 bkgReader.hepeup.PUP.at(iPart).at(1),
-		 bkgReader.hepeup.PUP.at(iPart).at(2),
-		 bkgReader.hepeup.PUP.at(iPart).at(3)
-		 );
-		 genElePx 	= ele(0); 
-		 genElePy 	= ele(1);
-		 genElePz 	= ele(2);
-		 genElePt 	= ele.Perp();
-		 genEleP3 	= (ele.Vect()).Mag();
-		 genEleEt 	= ele.Et(); 
-		 genEleMt 	= ele.Mt();
-		 genEleMass 	= ele.M();
-		 genEleEnergy 	= ele(3);
-                 genEleEta 	= ele.Eta();
-		 genEleTheta	= ele.Theta();
-                 genElePhi 	= ele.Phi();
-		 }
-	if (bkgReader.hepeup.ISTUP.at (iPart) == 1 && (abs(bkgReader.hepeup.IDUP.at(iPart)) == 12 || bkgReader.hepeup.ISTUP.at (iPart) == 1 && abs(bkgReader.hepeup.IDUP.at(iPart)) == 14) )
-		{
-		TLorentzVector met
-		 (
-		 bkgReader.hepeup.PUP.at(iPart).at(0),
-		 bkgReader.hepeup.PUP.at(iPart).at(1),
-		 bkgReader.hepeup.PUP.at(iPart).at(2),
-		 bkgReader.hepeup.PUP.at(iPart).at(3)
-		 );
-		 mgenPx 	= met(0); 
-		 mgenPy 	= met(1);
-		 mgenPz 	= met(2);
-		 mgenPt 	= met.Perp();
-		 mgenP3 	= (met.Vect()).Mag();
-		 mgenEt 	= met.Et(); 
-		 mgenMt 	= met.Mt();
-		 mgenMass 	= met.M();
-		 mgenEnergy 	= met(3);
-                 mgenEta 	= met.Eta();
-		 mgenTheta	= met.Theta();
-                 mgenPhi 	= met.Phi();
-		 }
-
+ 
             //PG incoming particle          
             if (bkgReader.hepeup.ISTUP.at (iPart) == -1){
                 initialQuarks.push_back (iPart) ;
             }
 
-	    //All final state particles
-	    if (bkgReader.hepeup.ISTUP.at (iPart) == 1){
-		ParticleOut.push_back(bkgReader.hepeup.IDUP.at (iPart));
-	    }
-	    if (bkgReader.hepeup.ISTUP.at (iPart) == -1){
-		ParticleIn.push_back(bkgReader.hepeup.IDUP.at (iPart));
-	    }
-	    if (bkgReader.hepeup.ISTUP.at (iPart) == 2 || bkgReader.hepeup.ISTUP.at (iPart) == -2){
-		ParticleIntermediate.push_back(bkgReader.hepeup.IDUP.at (iPart));
-	    }
-	    if (abs(bkgReader.hepeup.IDUP.at (iPart))==5){
-		bQuarkCount++;
-		bQuark.push_back(1);
-		bQuarkStatus.push_back(bkgReader.hepeup.ISTUP.at (iPart));
-	    }
-
-
-	    if (abs(bkgReader.hepeup.IDUP.at (iPart))==6){
-		tQuarkCount++;
-		tQuark.push_back(1);
-		tQuarkStatus.push_back(bkgReader.hepeup.ISTUP.at (iPart));
-		//std::cout<<"found t quark\n";
-	    }
-
-
-	    if (abs(bkgReader.hepeup.IDUP.at (iPart))==11 || abs(bkgReader.hepeup.IDUP.at (iPart))==13 || abs(bkgReader.hepeup.IDUP.at (iPart))==15){
-		LepCount++;
-		Lepton.push_back(1);
-		LeptonStatus.push_back(bkgReader.hepeup.ISTUP.at (iPart));
-		LeptonpdgId.push_back(bkgReader.hepeup.IDUP.at (iPart));
-	    }
             //PG outgoing particles          
             if (bkgReader.hepeup.ISTUP.at (iPart) == 1){
                 //PG leptons
@@ -384,33 +180,8 @@ int main (int argc, char **argv) {
                 tops.push_back (iPart) ;
             }
         } //PG loop over particles in the event
-	 if(bQuarkCount != 0) 
-	 	{
-	 	NumberOfBQuark = bQuarkCount;
-		}
-	else 
-		NumberOfBQuark = -10;
-
-	if(tQuarkCount != 0)
-		{	
-		NumberOftQuark = tQuarkCount;
-		}
-	else 
-		NumberOftQuark = -10;
     
-	if(LepCount != 0)
-		{	
-		NumberOfLeptonsAndNu = LepCount;
-		}
-	else 
-		NumberOfLeptonsAndNu = -10;
 
-	if(MuonCount != 0)
-		{	
-		NumberOfMuonsAndNu = MuonCount;
-		}
-	else 
-		NumberOfMuonsAndNu = -10;
         // --------------- Indices for final state particles  -------------------
         int i_olep_part = -1;
         int i_olep_anti = -1;        
@@ -444,7 +215,6 @@ int main (int argc, char **argv) {
         else{
             std::cout << "Problem!" << std::endl;
         }
-    std::cout<<"####################### Ramkrishna ######################";
         
         // --------------- If signal, find the quarks from the W  -------------------
         if (finalQuarks.size() == 4){
@@ -519,6 +289,14 @@ int main (int argc, char **argv) {
             i_iqrk_2 = finalQuarksNotW.at(1);                
         }
 
+//        std::cout << "signalFlag = " << signalFlag << std::endl;
+//        std::cout << "isMuMinus = " << isMuMinus << std::endl;        
+//        std::cout << "lep1 = " << bkgReader.hepeup.IDUP.at(i_olep_part) << std::endl;
+//        std::cout << "lep2 = " << bkgReader.hepeup.IDUP.at(i_olep_anti) << std::endl;        
+//        std::cout << "qrk1 = " << bkgReader.hepeup.IDUP.at(i_wqrk_1) << std::endl;
+//        std::cout << "qrk2 = " << bkgReader.hepeup.IDUP.at(i_wqrk_2) << std::endl;        
+//        std::cout << "i-qrk1 = " << bkgReader.hepeup.IDUP.at(i_iqrk_1) << std::endl;
+//        std::cout << "i-qrk2 = " << bkgReader.hepeup.IDUP.at(i_iqrk_2) << std::endl;        
 
         TLorentzVector fs_lep0
         (
@@ -542,8 +320,6 @@ int main (int argc, char **argv) {
          bkgReader.hepeup.PUP.at(i_wqrk_1).at(2), //PG pz
          bkgReader.hepeup.PUP.at(i_wqrk_1).at(3) //PG E
          ) ;
-
-
         TLorentzVector fs_Wqrk1
         (
          bkgReader.hepeup.PUP.at(i_wqrk_2).at(0), //PG px
@@ -551,8 +327,6 @@ int main (int argc, char **argv) {
          bkgReader.hepeup.PUP.at(i_wqrk_2).at(2), //PG pz
          bkgReader.hepeup.PUP.at(i_wqrk_2).at(3) //PG E
          ) ;
-
-
         TLorentzVector fs_Iqrk0
         (
          bkgReader.hepeup.PUP.at(i_iqrk_1).at(0), //PG px
@@ -560,7 +334,6 @@ int main (int argc, char **argv) {
          bkgReader.hepeup.PUP.at(i_iqrk_1).at(2), //PG pz
          bkgReader.hepeup.PUP.at(i_iqrk_1).at(3) //PG E
          ) ;
-
         TLorentzVector fs_Iqrk1
         (
          bkgReader.hepeup.PUP.at(i_iqrk_2).at(0), //PG px
@@ -569,7 +342,6 @@ int main (int argc, char **argv) {
          bkgReader.hepeup.PUP.at(i_iqrk_2).at(3) //PG E
          ) ;
         
-
         TLorentzVector p4_WHad = fs_Wqrk0 + fs_Wqrk1;
         TLorentzVector p4_WLep = fs_lep0 + fs_lep1;        
         TLorentzVector p4_WW = p4_WHad + p4_WLep;
@@ -578,57 +350,6 @@ int main (int argc, char **argv) {
         computeAngles( p4_WW, p4_WLep, fs_lep0, fs_lep1, p4_WHad, fs_Wqrk0, fs_Wqrk1, 
                       a_costheta1, a_costheta2, a_Phi, a_costhetastar, a_Phi1);
         
-	
-		j0genPx 	= fs_Iqrk0(0); 
-		j0genPy 	= fs_Iqrk0(1);
-		j0genPz 	= fs_Iqrk0(2);
-		j0genPt 	= fs_Iqrk0.Perp();
-		j0genP3 	= (fs_Iqrk0.Vect()).Mag();
-		j0genEt 	= fs_Iqrk0.Et(); 
-		j0genMt 	= fs_Iqrk0.Mt();
-		j0genMass 	= fs_Iqrk0.M();
-		j0genEnergy 	= fs_Iqrk0(3);
-		j0genEta 	= fs_Iqrk0.Eta();
-		j0genTheta 	= fs_Iqrk0.Theta();
-		j0genPhi 	= fs_Iqrk0.Phi();
-		j1genPx 	= fs_Iqrk1(0); 
-		j1genPy 	= fs_Iqrk1(1);
-		j1genPz 	= fs_Iqrk1(2);
-		j1genPt 	= fs_Iqrk1.Perp();
-		j1genP3 	= (fs_Iqrk1.Vect()).Mag();
-		j1genEt 	= fs_Iqrk1.Et(); 
-		j1genMt 	= fs_Iqrk1.Mt();
-		j1genMass 	= fs_Iqrk1.M();
-		j1genEnergy 	= fs_Iqrk1(3);
-		j1genEta 	= fs_Iqrk1.Eta();
-		j1genTheta 	= fs_Iqrk1.Theta();
-		j1genPhi 	= fs_Iqrk1.Phi();
-		j2genPx 	= fs_Wqrk0(0); 
-		j2genPy 	= fs_Wqrk0(1);
-		j2genPz 	= fs_Wqrk0(2);
-		j2genPt 	= fs_Wqrk0.Perp();
-		j2genP3 	= (fs_Wqrk0.Vect()).Mag();
-		j2genEt 	= fs_Wqrk0.Et(); 
-		j2genMt 	= fs_Wqrk0.Mt();
-		j2genMass 	= fs_Wqrk0.M();
-		j2genEnergy 	= fs_Wqrk0(3);
-		j2genEta 	= fs_Wqrk0.Eta();
-		j2genTheta 	= fs_Wqrk0.Theta();
-		j2genPhi 	= fs_Wqrk0.Phi();
-		j3genPx 	= fs_Wqrk1(0); 
-		j3genPy 	= fs_Wqrk1(1);
-		j3genPz 	= fs_Wqrk1(2);
-		j3genPt 	= fs_Wqrk1.Perp();
-		j3genP3 	= (fs_Wqrk1.Vect()).Mag();
-		j3genEt 	= fs_Wqrk1.Et(); 
-		j3genMt 	= fs_Wqrk1.Mt();
-		j3genMass 	= fs_Wqrk1.M();
-		j3genEnergy 	= fs_Wqrk1(3);
-		j3genEta 	= fs_Wqrk1.Eta();
-		j3genTheta 	= fs_Wqrk1.Theta();
-		j3genPhi 	= fs_Wqrk1.Phi();
-//*/
-
         mWW = (float) p4_WW.M();
         mWLep = (float) p4_WLep.M();
         mWHad = (float) p4_WHad.M();        
@@ -639,28 +360,12 @@ int main (int argc, char **argv) {
         phi1 = (float) a_Phi1;
 
         dEtajj = (float) fabs( fs_Iqrk0.Eta() - fs_Iqrk1.Eta() );
-        dEtaWW = (float) fabs( p4_WHad.Eta() - p4_WLep.Eta() );
         dPhijj = (float) deltaPhi(fs_Iqrk0.Phi(),fs_Iqrk1.Phi());     
-	dPhiWW = (float) deltaPhi(p4_WLep.Phi(),p4_WHad.Phi());
         mjj = (float) (fs_Iqrk0 + fs_Iqrk1).M();
 
         isSignal = signalFlag;
         
         tree->Fill();
-	ParticleOut.clear();
-	ParticleIn.clear();
-	ParticleIntermediate.clear();
-	bQuark.clear();
-	tQuark.clear();
-	bQuarkStatus.clear();
-	tQuarkStatus.clear();
-
-	Lepton.clear();
-	Muon.clear();
-	LeptonStatus.clear();
-	LeptonpdgId.clear();
-	MuonStatus.clear();
-
         
     }
     
