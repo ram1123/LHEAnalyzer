@@ -3,14 +3,14 @@
  *
  *       Filename:  anaPhantom.C
  *
- *    Description:  This macro reades the lhe file and makes a root file.
+ *    Description:  This macro reades the lhe file and convert it into root file.
  *
  *        Version:  1.0
  *        Created:  Friday 02 January 2015 04:45:09  IST
  *       Revision:  none
  *       Compiler:  gcc
  *
- *         Author:  Nhan
+ *         Author:  Nhan Viet Tran
  *	Edited By:  Ramkrishna Sharma 
  *   Organization:  CERN
  *
@@ -302,7 +302,7 @@ int main (int argc, char **argv) {
                  bkgReader.hepeup.PUP.at (finalQuarks.at (b)).at (3) //PG E
                  ) ;
 
-                float tmpDistance = abs( (qrk0+qrk1).M() - 80.2 );
+                float tmpDistance = std::abs( (qrk0+qrk1).M() - 80.2 );
                 if (tmpDistance < distanceToWMass){
                     i_wqrk_1 = finalQuarks.at(a);
                     i_wqrk_2 = finalQuarks.at(b);                    
