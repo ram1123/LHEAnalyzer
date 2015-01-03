@@ -29,9 +29,7 @@
 #include <cmath>
 #include "TTree.h"
 #include "TClonesArray.h"
-//#include "libPhysics.so"
 #include "TApplication.h"
-//#include "/cvmfs/cms.cern.ch/slc6_amd64_gcc491/lcg/root/5.34.22//lib/libPhysics.so"
 //#include "hFactory.h"
 //#include "h2Factory.h"
 //#include "hFunctions.h"
