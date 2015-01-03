@@ -107,6 +107,8 @@ int main (int argc, char **argv) {
     TClonesArray &aLQuarks = *LQuarks;
     TClonesArray *LTops = new TClonesArray("TLorentzVector");
     TClonesArray &aLTops = *LTops;
+    TClonesArray *LEle = new TClonesArray("TLorentzVector");
+    TClonesArray &aLEle = *LEle;
 
     
     tree->Branch("LMuon","TClonesArray", &LMuon, 32000,0);
