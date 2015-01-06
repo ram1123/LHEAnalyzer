@@ -93,33 +93,52 @@ int main (int argc, char **argv) {
     float dEtajj, dPhijj, mjj;
     int isSignal,isMuMinus;
 
-    TClonesArray *LMuon = new TClonesArray("TLorentzVector");
-    TClonesArray &aLMuon = *LMuon;
-    TClonesArray *LOutParticle = new TClonesArray("TLorentzVector");
-    TClonesArray &aLOutParticle = *LOutParticle;
-    TClonesArray *LInParticle = new TClonesArray("TLorentzVector");
-    TClonesArray &aLInParticle = *LInParticle;
-    TClonesArray *LIntermediateParticle = new TClonesArray("TLorentzVector");
-    TClonesArray &aLIntermediateParticle = *LIntermediateParticle;
-    TClonesArray *LLeptons = new TClonesArray("TLorentzVector");
-    TClonesArray &aLLeptons = *LLeptons;
-    TClonesArray *LQuarks = new TClonesArray("TLorentzVector");
-    TClonesArray &aLQuarks = *LQuarks;
-    TClonesArray *LTops = new TClonesArray("TLorentzVector");
-    TClonesArray &aLTops = *LTops;
-    TClonesArray *LEle = new TClonesArray("TLorentzVector");
-    TClonesArray &aLEle = *LEle;
+//    TClonesArray *LMuon = new TClonesArray("TLorentzVector");
+//    TClonesArray &aLMuon = *LMuon;
+//    TClonesArray *LOutParticle = new TClonesArray("TLorentzVector");
+//    TClonesArray &aLOutParticle = *LOutParticle;
+//    TClonesArray *LInParticle = new TClonesArray("TLorentzVector");
+//    TClonesArray &aLInParticle = *LInParticle;
+//    TClonesArray *LIntermediateParticle = new TClonesArray("TLorentzVector");
+//    TClonesArray &aLIntermediateParticle = *LIntermediateParticle;
+//    TClonesArray *LLeptons = new TClonesArray("TLorentzVector");
+//    TClonesArray &aLLeptons = *LLeptons;
+//    TClonesArray *LQuarks = new TClonesArray("TLorentzVector");
+//    TClonesArray &aLQuarks = *LQuarks;
+//    TClonesArray *LTops = new TClonesArray("TLorentzVector");
+//    TClonesArray &aLTops = *LTops;
+//    TClonesArray *LEle = new TClonesArray("TLorentzVector");
+//    TClonesArray &aLEle = *LEle;
 
-    
-    tree->Branch("LMuon","TClonesArray", &LMuon, 32000,0);
-    tree->Branch("LOutParticle","TClonesArray", &LOutParticle, 32000,0);
-    tree->Branch("LInParticle","TClonesArray", &LInParticle, 32000,0);
-    tree->Branch("LIntermediateParticle","TClonesArray", &LIntermediateParticle, 32000,0);
-    tree->Branch("LLeptons","TClonesArray", &LLeptons, 32000,0);
-    tree->Branch("LQuarks","TClonesArray", &LQuarks, 32000,0);
-    tree->Branch("LEle","TClonesArray", &LEle, 32000,0);
-    tree->Branch("LTops","TClonesArray", &LTops, 32000,0);
+    TClonesArray *Llep0 = new TClonesArray("TLorentzVector");
+    TClonesArray &aLlep0 = *Llep0;
+    tree->Branch("Llep0","TClonesArray", &Llep0, 32000,0);
+    TClonesArray *Llep1 = new TClonesArray("TLorentzVector");
+    TClonesArray &aLlep1 = *Llep1;
+    tree->Branch("Llep1","TClonesArray", &Llep1, 32000,0);
+    TClonesArray *LWqrk0 = new TClonesArray("TLorentzVector");
+    TClonesArray &aLWqrk0 = *LWqrk0;
+    tree->Branch("LWqrk0","TClonesArray", &LWqrk0, 32000,0);
+    TClonesArray *LWqrk1 = new TClonesArray("TLorentzVector");
+    TClonesArray &aLWqrk1 = *LWqrk1;
+    tree->Branch("LWqrk1","TClonesArray", &LWqrk1, 32000,0);
+    TClonesArray *LIqrk0 = new TClonesArray("TLorentzVector");
+    TClonesArray &aLIqrk0 = *LIqrk0;
+    tree->Branch("LIqrk0","TClonesArray", &LIqrk0, 32000,0);
+    TClonesArray *LIqrk1 = new TClonesArray("TLorentzVector");
+    TClonesArray &aLIqrk1 = *LIqrk1;
+    tree->Branch("LIqrk1","TClonesArray", &LIqrk1, 32000,0);
 
+
+//    tree->Branch("LMuon","TClonesArray", &LMuon, 32000,0);
+//    tree->Branch("LOutParticle","TClonesArray", &LOutParticle, 32000,0);
+//    tree->Branch("LInParticle","TClonesArray", &LInParticle, 32000,0);
+//    tree->Branch("LIntermediateParticle","TClonesArray", &LIntermediateParticle, 32000,0);
+//    tree->Branch("LLeptons","TClonesArray", &LLeptons, 32000,0);
+//    tree->Branch("LQuarks","TClonesArray", &LQuarks, 32000,0);
+//    tree->Branch("LEle","TClonesArray", &LEle, 32000,0);
+//    tree->Branch("LTops","TClonesArray", &LTops, 32000,0);
+//
 
     tree->Branch("mWW",&mWW,"mWW/F");
     tree->Branch("mWLep",&mWLep,"mWLep/F");
@@ -171,20 +190,20 @@ int main (int argc, char **argv) {
 //            << "\t mother " << bkgReader.hepeup.MOTHUP.at(iPart).first
 //            << "\t mother id " << bkgReader.hepeup.IDUP.at(mother1)
 //            << "\n" ;
-           if (bkgReader.hepeup.ISTUP.at (iPart) == 1 && abs(bkgReader.hepeup.IDUP.at(iPart)) == 13 )
-		{
-		 new(aLMuon[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
-		}
-
-           if (bkgReader.hepeup.ISTUP.at (iPart) == 1 && abs(bkgReader.hepeup.IDUP.at(iPart)) == 11 )
-		{
-		 new(aLEle[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
-		}
+//           if (bkgReader.hepeup.ISTUP.at (iPart) == 1 && abs(bkgReader.hepeup.IDUP.at(iPart)) == 13 )
+//		{
+//		 new(aLMuon[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
+//		}
+//
+//           if (bkgReader.hepeup.ISTUP.at (iPart) == 1 && abs(bkgReader.hepeup.IDUP.at(iPart)) == 11 )
+//		{
+//		 new(aLEle[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
+//		}
  
             //PG incoming particle          
             if (bkgReader.hepeup.ISTUP.at (iPart) == -1){
                 initialQuarks.push_back (iPart) ;
-		 new(aLInParticle[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
+//		 new(aLInParticle[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
             }
 
             //PG outgoing particles          
@@ -198,27 +217,27 @@ int main (int argc, char **argv) {
                     abs (bkgReader.hepeup.IDUP.at (iPart)) == 16)     //PG neutrino                    
                     {
                     leptons.push_back (iPart) ;
-		 new(aLLeptons[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
+//		 new(aLLeptons[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
                     } //PG leptons
                 else
                     {
                     finalQuarks.push_back (iPart) ;
-		 new(aLQuarks[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
+//		 new(aLQuarks[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
                     }
                 
-		 new(aLOutParticle[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
+//		 new(aLOutParticle[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
             } 
             
             //PG intermediates
             if (bkgReader.hepeup.ISTUP.at(iPart) == 2){
                 intermediates.push_back (iPart) ;
-		 new(aLIntermediateParticle[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
+//		 new(aLIntermediateParticle[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
             }
             
             //PG tops
             if (abs(bkgReader.hepeup.IDUP.at(iPart)) == 6){
                 tops.push_back (iPart) ;
-		 new(aLTops[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
+//		 new(aLTops[iPart]) TLorentzVector(bkgReader.hepeup.PUP.at(iPart).at(0), bkgReader.hepeup.PUP.at(iPart).at(1), bkgReader.hepeup.PUP.at(iPart).at(2), bkgReader.hepeup.PUP.at(iPart).at(3) );
             }
         } //PG loop over particles in the event
     
@@ -346,6 +365,12 @@ int main (int argc, char **argv) {
          bkgReader.hepeup.PUP.at(i_olep_part).at(2), //PG pz
          bkgReader.hepeup.PUP.at(i_olep_part).at(3) //PG E
          ) ;
+	 std::cout<<"BKGnumber = "<<BKGnumber<<std::endl;
+		 new(aLlep0[BKGnumber]) TLorentzVector(bkgReader.hepeup.PUP.at(i_olep_part).at(0), //PG px
+							bkgReader.hepeup.PUP.at(i_olep_part).at(1), //PG py
+							bkgReader.hepeup.PUP.at(i_olep_part).at(2), //PG pz
+							bkgReader.hepeup.PUP.at(i_olep_part).at(3) //PG E
+							);
         TLorentzVector fs_lep1
         (
          bkgReader.hepeup.PUP.at(i_olep_anti).at(0), //PG px
@@ -353,6 +378,12 @@ int main (int argc, char **argv) {
          bkgReader.hepeup.PUP.at(i_olep_anti).at(2), //PG pz
          bkgReader.hepeup.PUP.at(i_olep_anti).at(3) //PG E
          ) ;
+		 new(aLlep1[BKGnumber]) TLorentzVector(bkgReader.hepeup.PUP.at(i_olep_anti).at(0), //PG px
+							bkgReader.hepeup.PUP.at(i_olep_anti).at(1), //PG py
+							bkgReader.hepeup.PUP.at(i_olep_anti).at(2), //PG pz
+							bkgReader.hepeup.PUP.at(i_olep_anti).at(3) //PG E
+							) ;
+
     
         TLorentzVector fs_Wqrk0
         (
@@ -361,6 +392,12 @@ int main (int argc, char **argv) {
          bkgReader.hepeup.PUP.at(i_wqrk_1).at(2), //PG pz
          bkgReader.hepeup.PUP.at(i_wqrk_1).at(3) //PG E
          ) ;
+		 new(aLWqrk0[BKGnumber]) TLorentzVector(bkgReader.hepeup.PUP.at(i_wqrk_1).at(0), //PG px
+							bkgReader.hepeup.PUP.at(i_wqrk_1).at(1), //PG py
+							bkgReader.hepeup.PUP.at(i_wqrk_1).at(2), //PG pz
+							bkgReader.hepeup.PUP.at(i_wqrk_1).at(3) //PG E
+							) ;
+
         TLorentzVector fs_Wqrk1
         (
          bkgReader.hepeup.PUP.at(i_wqrk_2).at(0), //PG px
@@ -368,6 +405,11 @@ int main (int argc, char **argv) {
          bkgReader.hepeup.PUP.at(i_wqrk_2).at(2), //PG pz
          bkgReader.hepeup.PUP.at(i_wqrk_2).at(3) //PG E
          ) ;
+		 new(aLWqrk1[BKGnumber]) TLorentzVector(bkgReader.hepeup.PUP.at(i_wqrk_2).at(0), //PG px
+							bkgReader.hepeup.PUP.at(i_wqrk_2).at(1), //PG py
+							bkgReader.hepeup.PUP.at(i_wqrk_2).at(2), //PG pz
+							bkgReader.hepeup.PUP.at(i_wqrk_2).at(3) //PG E
+							) ;
         TLorentzVector fs_Iqrk0
         (
          bkgReader.hepeup.PUP.at(i_iqrk_1).at(0), //PG px
@@ -375,6 +417,11 @@ int main (int argc, char **argv) {
          bkgReader.hepeup.PUP.at(i_iqrk_1).at(2), //PG pz
          bkgReader.hepeup.PUP.at(i_iqrk_1).at(3) //PG E
          ) ;
+		 new(aLIqrk0[BKGnumber]) TLorentzVector(bkgReader.hepeup.PUP.at(i_iqrk_1).at(0), //PG px
+							bkgReader.hepeup.PUP.at(i_iqrk_1).at(1), //PG py
+							bkgReader.hepeup.PUP.at(i_iqrk_1).at(2), //PG pz
+							bkgReader.hepeup.PUP.at(i_iqrk_1).at(3) //PG E
+							) ;
         TLorentzVector fs_Iqrk1
         (
          bkgReader.hepeup.PUP.at(i_iqrk_2).at(0), //PG px
@@ -382,6 +429,11 @@ int main (int argc, char **argv) {
          bkgReader.hepeup.PUP.at(i_iqrk_2).at(2), //PG pz
          bkgReader.hepeup.PUP.at(i_iqrk_2).at(3) //PG E
          ) ;
+		 new(aLIqrk1[BKGnumber]) TLorentzVector(bkgReader.hepeup.PUP.at(i_iqrk_2).at(0), //PG px
+							bkgReader.hepeup.PUP.at(i_iqrk_2).at(1), //PG py
+							bkgReader.hepeup.PUP.at(i_iqrk_2).at(2), //PG pz
+							bkgReader.hepeup.PUP.at(i_iqrk_2).at(3) //PG E
+							) ;
         
         TLorentzVector p4_WHad = fs_Wqrk0 + fs_Wqrk1;
         TLorentzVector p4_WLep = fs_lep0 + fs_lep1;        
