@@ -86,8 +86,9 @@ int main (int argc, char **argv) {
  TApplication a("a", 0, 0); // just to make sure that the autoloading of ROOT libraries works
 
     TFile file(argv[2],"RECREATE");
+    file.SetCompressionLevel(2);
  //   TFile file("phantom.root","RECREATE");
-    TTree* tree = new TTree("tree","tree");
+    TTree* tree = new TTree("tree","Particles Info");
     
     float mWW, mWLep, mWHad, costheta1, costheta2, costhetastar, phi, phi1;
     float dEtajj, dPhijj, mjj;
@@ -112,32 +113,38 @@ int main (int argc, char **argv) {
 
     TClonesArray *Llep0 = new TClonesArray("TLorentzVector");
     TClonesArray &aLlep0 = *Llep0;
-    tree->Branch("Llep0","TClonesArray", &Llep0, 32000,0);
+    Llep0->BypassStreamer();
+    tree->Branch("Llep0","TClonesArray", &Llep0, 256000,0);
     TClonesArray *Llep1 = new TClonesArray("TLorentzVector");
     TClonesArray &aLlep1 = *Llep1;
-    tree->Branch("Llep1","TClonesArray", &Llep1, 32000,0);
+    Llep1->BypassStreamer();
+    tree->Branch("Llep1","TClonesArray", &Llep1, 256000,0);
     TClonesArray *LWqrk0 = new TClonesArray("TLorentzVector");
     TClonesArray &aLWqrk0 = *LWqrk0;
-    tree->Branch("LWqrk0","TClonesArray", &LWqrk0, 32000,0);
+    LWqrk0->BypassStreamer();
+    tree->Branch("LWqrk0","TClonesArray", &LWqrk0, 256000,0);
     TClonesArray *LWqrk1 = new TClonesArray("TLorentzVector");
     TClonesArray &aLWqrk1 = *LWqrk1;
-    tree->Branch("LWqrk1","TClonesArray", &LWqrk1, 32000,0);
+    LWqrk1->BypassStreamer();
+    tree->Branch("LWqrk1","TClonesArray", &LWqrk1, 256000,0);
     TClonesArray *LIqrk0 = new TClonesArray("TLorentzVector");
     TClonesArray &aLIqrk0 = *LIqrk0;
-    tree->Branch("LIqrk0","TClonesArray", &LIqrk0, 32000,0);
+    LIqrk0->BypassStreamer();
+    tree->Branch("LIqrk0","TClonesArray", &LIqrk0, 256000,0);
     TClonesArray *LIqrk1 = new TClonesArray("TLorentzVector");
     TClonesArray &aLIqrk1 = *LIqrk1;
-    tree->Branch("LIqrk1","TClonesArray", &LIqrk1, 32000,0);
+    LIqrk1->BypassStreamer();
+    tree->Branch("LIqrk1","TClonesArray", &LIqrk1, 256000,0);
 
 
-//    tree->Branch("LMuon","TClonesArray", &LMuon, 32000,0);
-//    tree->Branch("LOutParticle","TClonesArray", &LOutParticle, 32000,0);
-//    tree->Branch("LInParticle","TClonesArray", &LInParticle, 32000,0);
-//    tree->Branch("LIntermediateParticle","TClonesArray", &LIntermediateParticle, 32000,0);
-//    tree->Branch("LLeptons","TClonesArray", &LLeptons, 32000,0);
-//    tree->Branch("LQuarks","TClonesArray", &LQuarks, 32000,0);
-//    tree->Branch("LEle","TClonesArray", &LEle, 32000,0);
-//    tree->Branch("LTops","TClonesArray", &LTops, 32000,0);
+//    tree->Branch("LMuon","TClonesArray", &LMuon, 256000,0);
+//    tree->Branch("LOutParticle","TClonesArray", &LOutParticle, 256000,0);
+//    tree->Branch("LInParticle","TClonesArray", &LInParticle, 256000,0);
+//    tree->Branch("LIntermediateParticle","TClonesArray", &LIntermediateParticle, 256000,0);
+//    tree->Branch("LLeptons","TClonesArray", &LLeptons, 256000,0);
+//    tree->Branch("LQuarks","TClonesArray", &LQuarks, 256000,0);
+//    tree->Branch("LEle","TClonesArray", &LEle, 256000,0);
+//    tree->Branch("LTops","TClonesArray", &LTops, 256000,0);
 //
 
     tree->Branch("mWW",&mWW,"mWW/F");
