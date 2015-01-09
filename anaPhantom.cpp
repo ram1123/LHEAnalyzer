@@ -135,6 +135,22 @@ int main (int argc, char **argv) {
     TClonesArray &aLIqrk1 = *LIqrk1;
     LIqrk1->BypassStreamer();
     tree->Branch("LIqrk1","TClonesArray", &LIqrk1, 256000,0);
+    TClonesArray *LWLep = new TClonesArray("TLorentzVector");
+    TClonesArray &aLWLep = *LWLep;
+    LWLep->BypassStreamer();
+    tree->Branch("LWLep","TClonesArray", &LWLep, 256000,0);
+    TClonesArray *LWHad = new TClonesArray("TLorentzVector");
+    TClonesArray &aLWHad = *LWHad;
+    LWHad->BypassStreamer();
+    tree->Branch("LWHad","TClonesArray", &LWHad, 256000,0);
+    TClonesArray *LWW = new TClonesArray("TLorentzVector");
+    TClonesArray &aLWW = *LWW;
+    LWW->BypassStreamer();
+    tree->Branch("LWW","TClonesArray", &LWW, 256000,0);
+    TClonesArray *LFrdQrkSum = new TClonesArray("TLorentzVector");
+    TClonesArray &aLFrdQrkSum = *LFrdQrkSum;
+    LFrdQrkSum->BypassStreamer();
+    tree->Branch("LFrdQrkSum","TClonesArray", &LFrdQrkSum, 256000,0);
 
 
 //    tree->Branch("LMuon","TClonesArray", &LMuon, 256000,0);
@@ -372,7 +388,7 @@ int main (int argc, char **argv) {
          bkgReader.hepeup.PUP.at(i_olep_part).at(2), //PG pz
          bkgReader.hepeup.PUP.at(i_olep_part).at(3) //PG E
          ) ;
-	 std::cout<<"BKGnumber = "<<BKGnumber<<std::endl;
+//	 std::cout<<"BKGnumber = "<<BKGnumber<<std::endl;
 		 new(aLlep0[BKGnumber]) TLorentzVector(bkgReader.hepeup.PUP.at(i_olep_part).at(0), //PG px
 							bkgReader.hepeup.PUP.at(i_olep_part).at(1), //PG py
 							bkgReader.hepeup.PUP.at(i_olep_part).at(2), //PG pz
@@ -446,6 +462,26 @@ int main (int argc, char **argv) {
         TLorentzVector p4_WLep = fs_lep0 + fs_lep1;        
         TLorentzVector p4_WW = p4_WHad + p4_WLep;
         
+		 new(aLWHad[BKGnumber]) TLorentzVector(p4_WHad.Px(), //PG px
+							p4_WHad.Py(), //PG py
+							p4_WHad.Pz(), //PG pz
+							p4_WHad.E() //PG E
+							) ;
+		 new(aLWLep[BKGnumber]) TLorentzVector(p4_WLep.Px(), //PG px
+							p4_WLep.Py(), //PG py
+							p4_WLep.Pz(), //PG pz
+							p4_WLep.E() //PG E
+							) ;
+		 new(aLWW[BKGnumber]) TLorentzVector(p4_WW.Px(), //PG px
+							p4_WW.Py(), //PG py
+							p4_WW.Pz(), //PG pz
+							p4_WW.E() //PG E
+							) ;
+		 new(aLFrdQrkSum[BKGnumber]) TLorentzVector((fs_Iqrk1+fs_Iqrk0).Px(), //PG px
+							(fs_Iqrk1+fs_Iqrk0).Py(), //PG py
+							(fs_Iqrk1+fs_Iqrk0).Pz(), //PG pz
+							(fs_Iqrk1+fs_Iqrk0).E() //PG E
+							) ;
         double a_costheta1, a_costheta2, a_costhetastar, a_Phi, a_Phi1;
         computeAngles( p4_WW, p4_WLep, fs_lep0, fs_lep1, p4_WHad, fs_Wqrk0, fs_Wqrk1, 
                       a_costheta1, a_costheta2, a_Phi, a_costhetastar, a_Phi1);
