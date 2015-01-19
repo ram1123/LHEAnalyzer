@@ -195,7 +195,7 @@ int main (int argc, char **argv) {
     //PG loop over BKG
     while ( bkgReader.readEvent () ) {
         ++BKGnumber;
-        if (BKGnumber % 100000 == 0) std::cout << "BKG event " << BKGnumber << "\n" ;
+        if (BKGnumber % 1000 == 0) std::cout << "BKG event " << BKGnumber << "\n" ;
         //if (BKGnumber > 500000) break;
         
         std::vector<int> leptons ;      
@@ -503,6 +503,7 @@ int main (int argc, char **argv) {
         
         tree->Fill();
         
+//	if (BKGnumber > 20000)  break;
     }
     
     std::cout << "BKGnumber = " << BKGnumber << ", and NSignal = " << NSignal << std::endl;
