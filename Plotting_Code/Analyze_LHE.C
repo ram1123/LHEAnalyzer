@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-int Analyze_LHE_Coyte()
+int Analyze_LHE()
 {
   TFile *lhe = new TFile( "/eos/uscms/store/user/rasharma/LHE_outputs/13TeV/pp_WWJJ_TOT/lhe.root", "READ");
   if (!(lhe && lhe->IsOpen())) { delete lhe; return -1; }
