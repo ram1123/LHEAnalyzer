@@ -2,10 +2,10 @@ LHEAnalyzers
 ============
 
 To compile:
-c++ -o anaPhantom `root-config --glibs --cflags` anaPhantom.cpp
+c++ -o LHEanalyzer `root-config --glibs --cflags` LHEanalyzer.cpp
 
 To run:
-./anaPhantom  /path/of/inputFile.lhe   /path/of/outputfile/filename.root
+./LHEanalyzer  /path/of/inputFile.lhe   /path/of/outputfile/filename.root
 
 Location of files to run on:
 /eos/uscms/store/user/rasharma/lhe_files/POLARIZED_Samples
