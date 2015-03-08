@@ -1,3 +1,3 @@
-git add anaPhantom.cpp
-git commit -a -m "updated anaPhantom.cpp $1"
+git add LHEanalyzer.cpp
+git commit -a -m "updated LHEanalyzer.cpp on $1"
 git push origin LHEanalyzer
