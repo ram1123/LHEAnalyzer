@@ -2,7 +2,7 @@ LHEAnalyzers
 ============
 
 To compile:
-c++ -o LHEanalyzer `root-config --glibs --cflags` LHEanalyzer.cpp
+c++ -o LHEanalyzer ``root-config --glibs --cflags`` LHEanalyzer.cpp
 
 To run:
 ./LHEanalyzer  /path/of/inputFile.lhe   /path/of/outputfile/filename.root
