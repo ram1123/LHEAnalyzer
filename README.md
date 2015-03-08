@@ -20,3 +20,6 @@ Note: instead of &#39; in above command use the key just before 1 for similar to
 
 
 Location of output files go into 'plotting'.  Inside of 'plotting' dir you can find a small script for plotting the output.  This can obviously be modified to make the plots you would like.
+
+
+**To Read Root File created by the ExRootAnalysis Use the code ReadLHE.C & ReadLHE.h**
