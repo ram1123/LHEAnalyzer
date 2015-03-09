@@ -1,7 +1,7 @@
 /*                                                                                                                                             
  * =====================================================================================
  *
- *       Filename:  anaPhantom.C
+ *       Filename:  LHEanalyzer.cpp
  *
  *    Description:  This macro reades the lhe file and convert it into root file.
  *
@@ -30,7 +30,7 @@
 #include "TTree.h"
 #include "TClonesArray.h"
 #include "TApplication.h"
-#include "LHEanalyzer.h"
+//#include "LHEanalyzer.h"
 //#include "hFactory.h"
 //#include "h2Factory.h"
 //#include "hFunctions.h"
@@ -62,6 +62,15 @@
  8 -- bkg qcd persi
  6 -- bkg qcd totale
  
+	// Name of variables:
+	// costheta1 :
+	// costheta2 :
+	// costhetastar :
+	// phi :
+	// phi1 :
+	// costhetaV1 :
+	// costhetaV2 :
+	//
  
  */
 
@@ -90,6 +99,17 @@ int main (int argc, char **argv) {
     file.SetCompressionLevel(2);
  //   TFile file("phantom.root","RECREATE");
     TTree* tree = new TTree("tree","Particles Info");
+
+    float mWW, mWLep, mWHad, costheta1, costheta2, costhetastar, phi, phi1;
+    float costhetaV1, costhetaV2;
+    float dEtajj, dPhijj, mjj;
+    int isSignal,isMuMinus;
+    float Lep0_px, 	Lep0_py, 	Lep0_pz, 	Lep0_E  ;
+    float Lep1_px, 	Lep1_py, 	Lep1_pz, 	Lep1_E  ;
+    float Wqrk0_px,	Wqrk0_py, 	Wqrk0_pz, 	Wqrk0_E;
+    float Wqrk1_px, 	Wqrk1_py, 	Wqrk1_pz, 	Wqrk1_E;
+    float Iqrk0_px, 	Iqrk0_py, 	Iqrk0_pz, 	Iqrk0_E;
+    float Iqrk1_px, 	Iqrk1_py, 	Iqrk1_pz, 	Iqrk1_E;
     
     tree->Branch( "Iqrk1_E", &Iqrk1_E , "Iqrk1_E/F");
     tree->Branch( "Iqrk1_pz", &Iqrk1_pz , "Iqrk1_pz/F");
@@ -115,20 +135,22 @@ int main (int argc, char **argv) {
     tree->Branch( "Lep0_pz", &Lep0_pz , "Lep0_pz/F");
     tree->Branch( "Lep0_py", &Lep0_py , "Lep0_py/F");
     tree->Branch( "Lep0_px", &Lep0_px , "Lep0_px/F");
-    tree->Branch("mWW",&mWW,"mWW/F");
-    tree->Branch("mWLep",&mWLep,"mWLep/F");
-    tree->Branch("mWHad",&mWHad,"mWHad/F");
-    tree->Branch("costheta1",&costheta1,"costheta1/F");
-    tree->Branch("costheta2",&costheta2,"costheta2/F");
-    tree->Branch("costhetastar",&costhetastar,"costhetastar/F");
-    tree->Branch("phi",&phi,"phi/F");
-    tree->Branch("phi1",&phi1,"phi1/F");
-    tree->Branch("dEtajj",&dEtajj,"dEtajj/F");
-    tree->Branch("dPhijj",&dPhijj,"dPhijj/F");
-    tree->Branch("mjj",&mjj,"mjj/F");
+    tree->Branch( "mWW",&mWW,"mWW/F");
+    tree->Branch( "mWLep",&mWLep,"mWLep/F");
+    tree->Branch( "mWHad",&mWHad,"mWHad/F");
+    tree->Branch( "costheta1",&costheta1,"costheta1/F");
+    tree->Branch( "costheta2",&costheta2,"costheta2/F");
+    tree->Branch( "costhetaV1",&costhetaV1,"costhetaV1/F");
+    tree->Branch( "costhetaV2",&costhetaV2,"costhetaV2/F");
+    tree->Branch( "costhetastar",&costhetastar,"costhetastar/F");
+    tree->Branch( "phi",&phi,"phi/F");
+    tree->Branch( "phi1",&phi1,"phi1/F");
+    tree->Branch( "dEtajj",&dEtajj,"dEtajj/F");
+    tree->Branch( "dPhijj",&dPhijj,"dPhijj/F");
+    tree->Branch( "mjj",&mjj,"mjj/F");
     
-    tree->Branch("isSignal",&isSignal,"isSignal/I");
-    tree->Branch("isMuMinus",&isMuMinus,"isMuMinus/I");
+    tree->Branch( "isSignal",&isSignal,"isSignal/I");
+    tree->Branch( "isMuMinus",&isMuMinus,"isMuMinus/I");
     
     //PG loop over bkg
     //PG -------------
@@ -159,6 +181,7 @@ int main (int argc, char **argv) {
         std::vector<int> intermediates ;
         std::vector<int> tops ;        
         //PG loop over particles in the event
+	int incomingPart = 0;
         for (int iPart = 0 ; iPart < bkgReader.hepeup.IDUP.size (); ++iPart){
             
             int mother1 = bkgReader.hepeup.MOTHUP.at(iPart).first;
@@ -172,6 +195,8 @@ int main (int argc, char **argv) {
             //PG incoming particle          
             if (bkgReader.hepeup.ISTUP.at (iPart) == -1){
                 initialQuarks_.push_back (bkgReader.hepeup.IDUP.at (iPart)) ;
+		incomingPart++;
+		std::cout<<"incoming particle = "<<incomingPart<<std::endl;
 		count++;
             }
 
@@ -402,6 +427,7 @@ int main (int argc, char **argv) {
         mWHad = (float) p4_WHad.M();        
         costheta1 = (float) a_costheta1;                
         costheta2 = (float) a_costheta2;
+//	costhetaV1 = (float);
         phi = (float) a_Phi;
         costhetastar = (float) a_costhetastar;
         phi1 = (float) a_Phi1;
