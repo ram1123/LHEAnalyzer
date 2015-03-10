@@ -21,6 +21,7 @@ void compareQuantities(string var1, string var2, int nbins, float min, float max
 	float a2=0.42;
 	int color[9] = {2,3,4,1,5,1,7,8,9};
 	int style[9] = {1,2,3,4,1,4};
+	float yMax = 0.1;
 
 	cmsprem = new TLatex(0,0.45,"CMS Preliminary");
 	cmsprem->SetTextSize(0.04);
@@ -67,7 +68,9 @@ void compareQuantities(string var1, string var2, int nbins, float min, float max
 		if (i==0) th[i]->Scale(3/th[i]->Integral());
 		th[i]->Scale(1/th[i]->Integral());
 		
-		th[0]->SetMaximum(0.45);
+		//th[0]->SetMaximum(0.45);
+		th[0]->SetMaximum(TMath::Max(th[i]->GetMaximum()*1.10,yMax));
+		yMax = TMath::Max(th[i]->GetMaximum()*1.10,yMax);
 		if (i==0) th[i]->Draw(); else th[i]->Draw("sames");
 
 		leg[i] = new TLegend(a1,0.85,a2,0.99);

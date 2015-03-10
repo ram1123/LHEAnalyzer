@@ -102,15 +102,29 @@ int main (int argc, char **argv) {
 
     float mWW, mWLep, mWHad, costheta1, costheta2, costhetastar, phi, phi1;
     float costhetaV1, costhetaV2;
+    float costhetaV3, costhetaV4;
     float dEtajj, dPhijj, mjj;
     int isSignal,isMuMinus;
-    float Lep0_px, 	Lep0_py, 	Lep0_pz, 	Lep0_E  ;
-    float Lep1_px, 	Lep1_py, 	Lep1_pz, 	Lep1_E  ;
-    float Wqrk0_px,	Wqrk0_py, 	Wqrk0_pz, 	Wqrk0_E;
-    float Wqrk1_px, 	Wqrk1_py, 	Wqrk1_pz, 	Wqrk1_E;
-    float Iqrk0_px, 	Iqrk0_py, 	Iqrk0_pz, 	Iqrk0_E;
-    float Iqrk1_px, 	Iqrk1_py, 	Iqrk1_pz, 	Iqrk1_E;
-    
+    float Lep0_px, 	Lep0_py, 	Lep0_pz, 	 Lep0_pt	,	 Lep0_eta	,	Lep0_E  ;
+    float Lep1_px, 	Lep1_py, 	Lep1_pz, 	 Lep1_pt	,	 Lep1_eta	,	Lep1_E  ;
+    float Wqrk0_px,	Wqrk0_py, 	Wqrk0_pz, 	Wqrk0_pt	,	Wqrk0_eta	,	Wqrk0_E;
+    float Wqrk1_px, 	Wqrk1_py, 	Wqrk1_pz, 	Wqrk1_pt	,	Wqrk1_eta	,	Wqrk1_E;
+    float Iqrk0_px, 	Iqrk0_py, 	Iqrk0_pz, 	Iqrk0_pt	,	Iqrk0_eta	,	Iqrk0_E;
+    float Iqrk1_px, 	Iqrk1_py, 	Iqrk1_pz, 	Iqrk1_pt	,	Iqrk1_eta	,	Iqrk1_E;
+
+
+    tree->Branch( "Iqrk1_eta",	&Iqrk1_eta	,	"Iqrk1_eta/F" );
+    tree->Branch( "Iqrk1_pt",	&Iqrk1_pt	,	"Iqrk1_pt/F" );
+    tree->Branch( "Iqrk0_eta",	&Iqrk0_eta	,	"Iqrk0_eta/F" );
+    tree->Branch( "Iqrk0_pt",	&Iqrk0_pt	,	"Iqrk0_pt/F" );
+    tree->Branch( "Wqrk1_eta",	&Wqrk1_eta	,	"Wqrk1_eta/F" );
+    tree->Branch( "Wqrk1_pt",	&Wqrk1_pt	,	"Wqrk1_pt/F" );
+    tree->Branch( "Wqrk0_eta",	&Wqrk0_eta	,	"Wqrk0_eta/F" );
+    tree->Branch( "Wqrk0_pt",	&Wqrk0_pt	,	"Wqrk0_pt/F" );
+    tree->Branch( "Lep1_eta",	&Lep1_eta	,	"Lep1_eta/F" );
+    tree->Branch( "Lep1_pt",	&Lep1_pt	,	"Lep1_pt/F" );
+    tree->Branch( "Lep0_eta",	&Lep0_eta	,	"Lep0_eta/F" );
+    tree->Branch( "Lep0_pt",	&Lep0_pt	,	"Lep0_pt/F" );
     tree->Branch( "Iqrk1_E", &Iqrk1_E , "Iqrk1_E/F");
     tree->Branch( "Iqrk1_pz", &Iqrk1_pz , "Iqrk1_pz/F");
     tree->Branch( "Iqrk1_py", &Iqrk1_py , "Iqrk1_py/F");
@@ -142,6 +156,8 @@ int main (int argc, char **argv) {
     tree->Branch( "costheta2",&costheta2,"costheta2/F");
     tree->Branch( "costhetaV1",&costhetaV1,"costhetaV1/F");
     tree->Branch( "costhetaV2",&costhetaV2,"costhetaV2/F");
+    tree->Branch( "costhetaV3",&costhetaV3,"costhetaV3/F");
+    tree->Branch( "costhetaV4",&costhetaV4,"costhetaV4/F");
     tree->Branch( "costhetastar",&costhetastar,"costhetastar/F");
     tree->Branch( "phi",&phi,"phi/F");
     tree->Branch( "phi1",&phi1,"phi1/F");
@@ -180,6 +196,7 @@ int main (int argc, char **argv) {
         std::vector<int> finalQuarks ;      
         std::vector<int> intermediates ;
         std::vector<int> tops ;        
+	TLorentzVector Is_Iqrk1,Is_Iqrk0;
         //PG loop over particles in the event
 	int incomingPart = 0;
         for (int iPart = 0 ; iPart < bkgReader.hepeup.IDUP.size (); ++iPart){
@@ -196,7 +213,27 @@ int main (int argc, char **argv) {
             if (bkgReader.hepeup.ISTUP.at (iPart) == -1){
                 initialQuarks_.push_back (bkgReader.hepeup.IDUP.at (iPart)) ;
 		incomingPart++;
-		std::cout<<"incoming particle = "<<incomingPart<<std::endl;
+		if (incomingPart == 1)
+		{
+			Is_Iqrk0.SetPxPyPzE
+			(
+                 	bkgReader.hepeup.PUP.at (incomingPart ).at (0), //PG px
+                 	bkgReader.hepeup.PUP.at (incomingPart ).at (1), //PG py
+                 	bkgReader.hepeup.PUP.at (incomingPart ).at (2), //PG pz
+                 	bkgReader.hepeup.PUP.at (incomingPart ).at (3) //PG E
+			);
+		}
+		if (incomingPart == 2)
+		{
+			Is_Iqrk1.SetPxPyPzE
+			(
+                 	bkgReader.hepeup.PUP.at (incomingPart ).at (0), //PG px
+                 	bkgReader.hepeup.PUP.at (incomingPart ).at (1), //PG py
+                 	bkgReader.hepeup.PUP.at (incomingPart ).at (2), //PG pz
+                 	bkgReader.hepeup.PUP.at (incomingPart ).at (3) //PG E
+			);
+		}
+		//std::cout<<"incoming particle = "<<incomingPart<<std::endl;
 		count++;
             }
 
@@ -354,10 +391,12 @@ int main (int argc, char **argv) {
          bkgReader.hepeup.PUP.at(i_olep_part).at(2), //PG pz
          bkgReader.hepeup.PUP.at(i_olep_part).at(3) //PG E
          ) ;
-		Lep0_px	= bkgReader.hepeup.PUP.at(i_olep_part).at(0);
-		Lep0_py	= bkgReader.hepeup.PUP.at(i_olep_part).at(1);
-		Lep0_pz	= bkgReader.hepeup.PUP.at(i_olep_part).at(2);
-		Lep0_E	= bkgReader.hepeup.PUP.at(i_olep_part).at(3);
+		Lep0_px	 = bkgReader.hepeup.PUP.at(i_olep_part).at(0);
+		Lep0_py	 = bkgReader.hepeup.PUP.at(i_olep_part).at(1);
+		Lep0_pz	 = bkgReader.hepeup.PUP.at(i_olep_part).at(2);
+		Lep0_E	 = bkgReader.hepeup.PUP.at(i_olep_part).at(3);
+		Lep0_pt  = fs_lep0.Pt();
+		Lep0_eta = fs_lep0.Eta();
         TLorentzVector fs_lep1
         (
          bkgReader.hepeup.PUP.at(i_olep_anti).at(0), //PG px
@@ -369,6 +408,8 @@ int main (int argc, char **argv) {
 		Lep1_py	= bkgReader.hepeup.PUP.at(i_olep_anti).at(1);
 		Lep1_pz	= bkgReader.hepeup.PUP.at(i_olep_anti).at(2);
 		Lep1_E	= bkgReader.hepeup.PUP.at(i_olep_anti).at(3);
+		Lep1_pt = fs_lep1.Pt();
+		Lep1_eta= fs_lep1.Eta();
     
         TLorentzVector fs_Wqrk0
         (
@@ -380,7 +421,10 @@ int main (int argc, char **argv) {
 	 	Wqrk0_px = bkgReader.hepeup.PUP.at(i_wqrk_1).at(0);
 	 	Wqrk0_py = bkgReader.hepeup.PUP.at(i_wqrk_1).at(1);
 	 	Wqrk0_pz = bkgReader.hepeup.PUP.at(i_wqrk_1).at(2);
-	 	Wqrk0_E = bkgReader.hepeup.PUP.at(i_wqrk_1).at(3);
+	 	Wqrk0_E  = bkgReader.hepeup.PUP.at(i_wqrk_1).at(3);
+		Wqrk0_pt = fs_Wqrk0.Pt();
+		Wqrk0_eta= fs_Wqrk0.Eta();
+
         TLorentzVector fs_Wqrk1
         (
          bkgReader.hepeup.PUP.at(i_wqrk_2).at(0), //PG px
@@ -392,6 +436,9 @@ int main (int argc, char **argv) {
 	 	Wqrk1_py = bkgReader.hepeup.PUP.at(i_wqrk_2).at(1);
 	 	Wqrk1_pz = bkgReader.hepeup.PUP.at(i_wqrk_2).at(2);
 	 	Wqrk1_E  = bkgReader.hepeup.PUP.at(i_wqrk_2).at(3);
+		Wqrk1_pt = fs_Wqrk1.Pt();
+		Wqrk1_eta= fs_Wqrk1.Eta();
+
         TLorentzVector fs_Iqrk0
         (
          bkgReader.hepeup.PUP.at(i_iqrk_1).at(0), //PG px
@@ -403,6 +450,9 @@ int main (int argc, char **argv) {
 	 	Iqrk0_py = bkgReader.hepeup.PUP.at(i_iqrk_1).at(1);
 	 	Iqrk0_pz = bkgReader.hepeup.PUP.at(i_iqrk_1).at(2);
 	 	Iqrk0_E  = bkgReader.hepeup.PUP.at(i_iqrk_1).at(3);
+		Iqrk0_pt = fs_Iqrk0.Pt();
+		Iqrk0_eta= fs_Iqrk0.Eta();
+
         TLorentzVector fs_Iqrk1
         (
          bkgReader.hepeup.PUP.at(i_iqrk_2).at(0), //PG px
@@ -414,6 +464,9 @@ int main (int argc, char **argv) {
 	 	Iqrk1_py = bkgReader.hepeup.PUP.at(i_iqrk_2).at(1);
 	 	Iqrk1_pz = bkgReader.hepeup.PUP.at(i_iqrk_2).at(2);
 	 	Iqrk1_E  = bkgReader.hepeup.PUP.at(i_iqrk_2).at(3);
+		Iqrk1_pt = fs_Iqrk1.Pt();
+		Iqrk1_eta= fs_Iqrk1.Eta();
+
         TLorentzVector p4_WHad = fs_Wqrk0 + fs_Wqrk1;
         TLorentzVector p4_WLep = fs_lep0 + fs_lep1;        
         TLorentzVector p4_WW = p4_WHad + p4_WLep;
@@ -427,7 +480,10 @@ int main (int argc, char **argv) {
         mWHad = (float) p4_WHad.M();        
         costheta1 = (float) a_costheta1;                
         costheta2 = (float) a_costheta2;
-//	costhetaV1 = (float);
+	costhetaV1 = (float)((fs_Iqrk0-Is_Iqrk0).Theta()-fs_Wqrk0.Theta());
+	costhetaV2 = (float)((fs_Iqrk0-Is_Iqrk1).Theta()-fs_Wqrk0.Theta());
+	costhetaV3 = (float)((fs_Iqrk0-Is_Iqrk0).Theta()-fs_Wqrk1.Theta());
+	costhetaV4 = (float)((fs_Iqrk0-Is_Iqrk1).Theta()-fs_Wqrk1.Theta());
         phi = (float) a_Phi;
         costhetastar = (float) a_costhetastar;
         phi1 = (float) a_Phi1;
