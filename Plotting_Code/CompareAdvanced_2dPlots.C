@@ -65,6 +65,7 @@ void compareQuantities(string var1, string var2, int xbins,  float minx, float m
 		tt[i] = (TTree*) tf[i]->Get("tree");
 		th[i] = new TH2F(Form("th%i",i),"",xbins,minx,maxx,ybins,miny,maxy);
 		tt[i]->Draw(Form("%s:%s>>th%i",var2.c_str(),var1.c_str(),i), cut.c_str(), "colz");
+		cout<<"Correlation factor = "<<th[i]->GetCorrelationFactor()<<endl;
 		
 		th[i]->SetStats(0);
 		th[i]->SetLineWidth(2);

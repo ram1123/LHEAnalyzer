@@ -15,11 +15,15 @@ format to enter
 
 abc.root is the name of root file  --->>> abc is the legend of abc.root;   similarly others.
 */
-void compareQuantities(string var1, string var2, int nbins, float min, float max, string cut="",int n,...){
+
+//double 13TeVScale(
+void compareQuantities(string var1, string var2, string xtitle, int nbins, float min, float max, string cut="",int n,...){
 	
 	float a1=0.29;
-	float a2=0.42;
-	int color[9] = {2,3,4,1,5,1,7,8,9};
+	float a2;
+		if (n==2) a2=0.59;
+		else a2=42;
+	int color[9] = {2,4,3,1,5,1,7,8,9};
 	int style[9] = {1,2,3,4,1,4};
 	float yMax = 0.1;
 
@@ -27,11 +31,13 @@ void compareQuantities(string var1, string var2, int nbins, float min, float max
 	cmsprem->SetTextSize(0.04);
 
 	if (var2 == "") var2 = var1;
+	if (xtitle == "") xtitle = var1;
 	
-	cout<<var1<<"\t"<<var2<<endl;
+//	cout<<var1<<"\t"<<var2<<endl;
 
 	gStyle->SetOptStat(0);
 	gROOT->ForceStyle(kTRUE);
+	TGaxis::SetMaxDigits(3);
 
 	va_list list;
 	va_start(list, n);
@@ -61,20 +67,26 @@ void compareQuantities(string var1, string var2, int nbins, float min, float max
 		th[i]->GetYaxis()->SetTitle("Fraction of Events");
 		th[i]->GetYaxis()->CenterTitle();
 		th[i]->GetYaxis()->SetTitleOffset(1.30);
-		th[i]->GetXaxis()->SetTitle(var2.c_str());
-		th[i]->GetXaxis()->SetTitle(var2.c_str());
+		th[i]->GetXaxis()->SetTitle(xtitle.c_str());
 		th[i]->GetXaxis()->CenterTitle();
 
-		if (i==0) th[i]->Scale(3/th[i]->Integral());
-		th[i]->Scale(1/th[i]->Integral());
+		string tmp_str=va_arg(list,char*);
+
+		if (i==0) th[i]->Scale((0.075*0.0060286880679)/th[i]->Integral());
+		th[i]->Scale((0.075*0.00617863847773)/th[i]->Integral());
+		//if (i==0) th[i]->Scale(1./th[i]->Integral());
+		//th[i]->Scale(1./th[i]->Integral());
 		
 		//th[0]->SetMaximum(0.45);
-		th[0]->SetMaximum(TMath::Max(th[i]->GetMaximum()*1.10,yMax));
-		yMax = TMath::Max(th[i]->GetMaximum()*1.10,yMax);
+		//th[0]->SetMaximum(TMath::Max(th[i]->GetMaximum()*1.10,yMax));
+		//yMax = TMath::Max(th[i]->GetMaximum()*1.10,yMax);
 		if (i==0) th[i]->Draw(); else th[i]->Draw("sames");
 
-		leg[i] = new TLegend(a1,0.85,a2,0.99);
-		leg[i]->AddEntry(th[i],va_arg(list, char*),"l");
+		if (n==2) leg[i] = new TLegend(a1,0.89,a2,0.99);
+		else leg[i] = new TLegend(a1,0.82,a2,0.99);
+		//leg[i]->AddEntry(th[i],va_arg(list, char*),"l");
+		leg[i]->AddEntry(th[i],tmp_str.c_str(),"l");
+		if (n==2) leg[i]->SetTextSize(0.05);
 
 		int entries = th[i]->GetEntries();
 		char c[20];
@@ -85,8 +97,9 @@ void compareQuantities(string var1, string var2, int nbins, float min, float max
 		//cmsprem->Draw();
 
 		a1 = a2;
-		a2 = a2+0.16;
-		cout<<"histogram  "<<Form("th%i",i)<<"  entries = "<<th[i]->GetEntries()<<endl;
+		if (n==2) a2=a2+0.30;
+		else a2 = a2+0.16;
+//		cout<<"histogram  "<<Form("th%i",i)<<"  entries = "<<th[i]->GetEntries()<<endl;
 
 	}
 	va_end(list);
