@@ -9,9 +9,11 @@
 
 // const string Cut = "(abs(Lep1_eta)<2.5) && (abs(Lep0_eta)<2.5) && (Lep0_pt>20) && (Lep1_pt>20) && (Wqrk1_pt>10) && (Wqrk0_pt>10) && (Iqrk0_pt>10) && (Iqrk1_pt>10) && (mjj > 500.) && (Iqrk1_eta-Iqrk0_eta > 4.0) ";
 
-const string Cut = " (Iqrk0_pt>30) && (Iqrk1_pt>30) && (Iqrk0_eta<4.5) && (Iqrk1_eta<4.5) && (Iqrk1_eta-Iqrk0_eta > 4.0) && (Iqrk1_eta*Iqrk0_eta*cos(Iqrk1_theta-Iqrk1_theta)<0) && (Wqrk1_pt>20) && (Wqrk0_pt>20) && (Wqrk1_E>50) && (Wqrk0_E > 50) && (mjj > 500) && (Lep0_pt>20) && (Lep1_pt>20) && (abs(Lep1_eta)<2.5) && (abs(Lep0_eta)<2.5) && (abs((Wqrk0_E+Wqrk1_E) - 80.385) <25)";//  && (abs((Lep0_E+Lep1_E) - 80.385) < 15)" ;
 
+//const string Cut = " (Iqrk0_pt>30) && (Iqrk1_pt>30) && (Iqrk0_eta<4.5) && (Iqrk1_eta<4.5) && (Iqrk1_eta-Iqrk0_eta > 4.0) && (Iqrk1_eta*Iqrk0_eta*cos(Iqrk1_theta-Iqrk1_theta)<0) && (Wqrk1_pt>20) && (Wqrk0_pt>20) && (Wqrk1_E>50) && (Wqrk0_E > 50) && (mjj > 500) && (Lep0_pt>20) && (Lep1_pt>20) && (abs(Lep1_eta)<2.5) && (abs(Lep0_eta)<2.5) && (abs((Wqrk0_E+Wqrk1_E) - 80.385) <25)";//  && (abs((Lep0_E+Lep1_E) - 80.385) < 15)" ;
 
+//const string Cut = "(Lep1_pt>0)";
+const string Cut = "";
 // TCanvas *Canvas1 = new TCanvas("Canvas1","example",600,700);
  TCanvas *Canvas1 = new TCanvas("c1236","Muon",200,10,800,700);
 //	LINE NUMBER 148 STARTS BASIC PLOTS
@@ -21,10 +23,13 @@ Canvas1->SaveAs( ".pdf");
 Canvas1->Clear();
 
 */
-
-compareQuantities(1 , 0 , 0 , "Lep1_eta-Iqrk0_eta","","",30,-8.,8.,Cut,4,"/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_LL.root","LL","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_LT.root","LT","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_TT.root","TT","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_TOT.root","TOT");
+#if 1
+compareQuantities(0 , 1 , 0 , 1 , "(Wqrk1_pt-Wqrk0_pt)/(Wqrk1_pt+Wqrk0_pt)","","",50,-1.,1.,Cut,4,"/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_LL.root","LL","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_LT.root","LT","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_TT.root","TT","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_TOT.root","TOT");
+//compareQuantities(0 , 1 , 0 , 1 , "Lep1_eta-Iqrk0_eta","","",30,-8.,8.,Cut,4,"/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_LL.root","LL","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_LT.root","LT","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_TT.root","TT","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_TOT.root","TOT");
 Canvas1->SaveAs( "L1Q0_D_eta.pdf");
 Canvas1->Clear();
+
+#else
 
 compareQuantities(1 , 0 , 0 , "Lep1_eta-Iqrk1_eta","","",30,-8.,8.,Cut,4,"/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_LL.root","LL","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_LT.root","LT","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_TT.root","TT","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_TOT.root","TOT");
 Canvas1->SaveAs( "L1Q1_D_eta.pdf");
@@ -350,22 +355,7 @@ compareQuantities(1 , 0 , 0 , "Lep0_theta","","",20,-3.5 ,3.5 ,Cut,4,"/eos/uscms
 Canvas1->SaveAs(" Lep0_theta.pdf");
 Canvas1->Clear();
 
-
-/*
-dPhijj  dEtajj Lep0_px Lep0_py Lep0_pz Lep0_E Lep1_px Lep1_py Lep1_pz Lep1_E Wqrk0_px Wqrk0_py Wqrk0_pz Wqrk0_E Wqrk1_px Wqrk1_py Wqrk1_pz Wqrk1_E Iqrk0_px Iqrk0_py Iqrk0_pz Iqrk0_E Iqrk1_px Iqrk1_py Iqrk1_pz Iqrk1_E Lep0_pt Lep0_eta Lep1_pt Lep1_eta Wqrk0_pt Wqrk0_eta Wqrk1_pt Wqrk1_eta Iqrk0_pt Iqrk0_eta Iqrk1_pt Iqrk1_eta Iqrk1_phi Iqrk0_phi Wqrk1_phi Wqrk0_phi Lep1_phi Lep0_phi Iqrk1_theta Iqrk0_theta Wqrk1_theta Wqrk0_theta Lep1_theta Lep0_theta
-
-
-
-compareQuantities(1 , 0 , 0 , "","","",20,-1. ,1. ,Cut,4,"/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_LL.root","LL","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_LT.root","LT","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_TT.root","TT","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_TOT.root","TOT");
-Canvas1->SaveAs(" .pdf");
-Canvas1->Clear();
-compareQuantities(1 , 0 , 0 ,"","","","",20, , ,"","",4,"/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_LL.root","LL","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_LT.root","LT","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_TT.root","TT","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_TOT.root","TOT");
-Canvas1->SaveAs(".pdf");
-Canvas1->Clear();
-*/
-// compareQuantities(1 , 0 , 0 ,"mjj","","",20,0,500,"","",4,"/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_LL_wpHadwmLep.root","LL","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_LT_wpHadwmLep.root","LT","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_TT_WpLepWmHad.root","TT","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_TOT_WpLepWmHad.root","TOT");
- //compareQuantities(1 , 0 , 0 ,0,1,"mjj","","",20,0,500,"","",4,"/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_LL_wpHadwmLep.root","LL","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_LT_wpHadwmLep.root","LT","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_TT_WpLepWmHad.root","TT","/eos/uscms/store/user/rasharma/WWScattering/OutPut_LHEanalyzer/DefaultCut/pp_WWJJ_TOT_WpLepWmHad.root","TOT");
-
+#endif
 
 
 }
