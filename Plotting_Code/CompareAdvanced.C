@@ -16,22 +16,16 @@ format to enter
 abc.root is the name of root file  --->>> abc is the legend of abc.root;   similarly others.
 */
 #include <string>
-#include "CrossSection.h"
+//#include "CrossSection.h"
 
 //double 13TeVScale(
 void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string var1, string var2, string xtitle, int nbins, float min, float max, string cut="",int n,...){
 	
-
-
-//    gROOT->LoadMacro("CMS_lumi.C");
-//    writeExtraText = true;       // if extra text
-//    extraText  = "Preliminary";  // default extra text is "Preliminary"
-
-	float a1=0.39;
+	float a1=0.29;
 	float a2;
 		if (n<=3) a2=0.59;
 		else 
-		if (n==4) a2=0.52;
+		if (n==4) a2=0.42;
 		else
 		{
 		cout<<"Please Enter the Correct value of size of legend"<<endl;
@@ -45,6 +39,8 @@ void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string va
 	float xSec; 		// Cross-section
 	float Lumi=0.075;	// Luminosity
 
+	cmsprem = new TLatex(0,0.45,"CMS Preliminary");
+	cmsprem->SetTextSize(0.04);
 
 	if (var2 == "") var2 = var1;
 	if (xtitle == "") xtitle = var1;
@@ -118,20 +114,34 @@ void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string va
 
 		if (NormUnity)
 		{
+		/*
+		 *Normalized to Unity Part
+		 */
 		if (i==0) th[i]->Scale(1./th[i]->Integral());
 		th[i]->Scale(1./th[i]->Integral());
 		th[i]->GetYaxis()->SetTitle("Fraction of Events");
-		th[0]->SetMaximum(TMath::Max(th[i]->GetMaximum()*1.20,yMax));
-		yMax = TMath::Max(th[i]->GetMaximum()*1.20,yMax);
+		th[0]->SetMaximum(TMath::Max(th[i]->GetMaximum()*1.10,yMax));
+		yMax = TMath::Max(th[i]->GetMaximum()*1.10,yMax);
+		 
+		/*
+		 * Normalized one histogram with another
+		 */
+		/* 
+		if (i==0) float num = th[i]->Integral();
+		if (i==1) th[i]->Scale(num/(th[i]->Integral()));
+		th[i]->GetYaxis()->SetTitle("Number of Events");
+		th[0]->SetMaximum(TMath::Max(th[i]->GetMaximum()*1.10,yMax));
+		yMax = TMath::Max(th[i]->GetMaximum()*1.10,yMax);
+		*/
 		}
 		
 		//th[0]->SetMaximum(0.0014);
-		if (i==0) th[i]->Draw(); else th[i]->Draw("sames");
+		if (i==0) th[i]->Draw("sames"); else th[i]->Draw("sames");
 
 		if (ShowEvents)
 		{
-		if (n==2) leg[i] = new TLegend(a1,0.83,a2,0.93);
-		else leg[i] = new TLegend(a1,0.83,a2,0.93);
+		if (n==2) leg[i] = new TLegend(a1,0.89,a2,0.99);
+		else leg[i] = new TLegend(a1,0.82,a2,0.99);
 		leg[i]->AddEntry(th[i],tmp_str.c_str(),"l");
 
 		int entries = th[i]->GetEntries();
@@ -142,12 +152,12 @@ void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string va
 		}
 		else
 		{
-		if (n==2) leg[i] = new TLegend(a1,0.86,a2,0.93);
-		else leg[i] = new TLegend(a1,0.86,a2,0.93);
+		if (n==2) leg[i] = new TLegend(a1,0.89,a2,0.95);
+		else leg[i] = new TLegend(a1,0.89,a2,0.95);
 		leg[i]->AddEntry(th[i],tmp_str.c_str(),"l");
 		}
 		//leg[i]->AddEntry(th[i],va_arg(list, char*),"l");
-		//if (n==2) leg[i]->SetTextSize(0.05);
+		if (n==2) leg[i]->SetTextSize(0.05);
 
 		leg[i]->Draw("sames");
 		//cmsprem->Draw();
