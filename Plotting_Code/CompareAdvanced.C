@@ -49,7 +49,7 @@ void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string va
 
 	gStyle->SetOptStat(0);
 	gROOT->ForceStyle(kTRUE);
-	TGaxis::SetMaxDigits(3);
+	TGaxis::SetMaxDigits(4);
 
 	va_list list;
 	va_start(list, n);
@@ -67,7 +67,8 @@ void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string va
 		fname[i]=va_arg(list, char*);
 		tf[i] = new TFile(fname[i]);
 		//tt[i] = (TTree*) tf[i]->Get("demo/tree");
-		tt[i] = (TTree*) tf[i]->Get("tree");
+		//tt[i] = (TTree*) tf[i]->Get("tree");
+		tt[i] = (TTree*) tf[i]->Get("otree");
 		th[i] = new TH1F(Form("th%i",i),"",nbins,min,max);
 		tt[i]->Draw(Form("%s>>th%i",var1.c_str(),i), cut.c_str(), "goff");
 		
@@ -95,7 +96,7 @@ void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string va
 		//cout<<"xSec = "<<xSec<<endl;
 
 		//cout<<"Max before scale = "<<th[i]->GetMaximum()<<endl;
-		if (i==0) th[i]->Scale((Lumi*xSec)/th[i]->Integral());
+		//if (i==0) th[i]->Scale((Lumi*xSec)/th[i]->Integral());
 		th[i]->Scale((Lumi*xSec)/th[i]->Integral());
 
 		//cout<<"Max after scale = "<<th[i]->GetMaximum()<<endl;
@@ -117,7 +118,7 @@ void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string va
 		/*
 		 *Normalized to Unity Part
 		 */
-		if (i==0) th[i]->Scale(1./th[i]->Integral());
+		//if (i==0) th[i]->Scale(1./th[i]->Integral());
 		th[i]->Scale(1./th[i]->Integral());
 		th[i]->GetYaxis()->SetTitle("Fraction of Events");
 		th[0]->SetMaximum(TMath::Max(th[i]->GetMaximum()*1.10,yMax));
@@ -136,7 +137,7 @@ void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string va
 		}
 		
 		//th[0]->SetMaximum(0.0014);
-		if (i==0) th[i]->Draw("sames"); else th[i]->Draw("sames");
+		if (i==0) th[i]->Draw(); else th[i]->Draw("sames");
 
 		if (ShowEvents)
 		{
