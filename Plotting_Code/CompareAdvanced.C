@@ -19,8 +19,9 @@ abc.root is the name of root file  --->>> abc is the legend of abc.root;   simil
 //#include "CrossSection.h"
 
 //double 13TeVScale(
-void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string var1, string var2, string xtitle, int nbins, float min, float max, string cut="",int n,...){
+void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string var1, string var2, string var3, string xtitle, int nbins, float min, float max, string cut="",int n,...){
 	
+	int countVar = 0;
 	float a1=0.29;
 	float a2;
 		if (n<=3) a2=0.59;
@@ -42,8 +43,9 @@ void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string va
 	cmsprem = new TLatex(0,0.45,"CMS Preliminary");
 	cmsprem->SetTextSize(0.04);
 
-	if (var2 == "") var2 = var1;
 	if (xtitle == "") xtitle = var1;
+	if (var2 != "")	countVar++;
+	if (var3 != "") countVar++;
 	
 	//	cout<<var1<<"\t"<<var2<<endl;
 
@@ -60,18 +62,36 @@ void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string va
 	TPaveStats** tp = new TPaveStats*[n];
 	TLegend** leg = new TLegend*[n];
 
-	for (int i=0;i<n;i++)
+	for (int i=0;i<3;i++)
 	{
-
-
+		cout<<"Debug1"<<endl;
+		if(i==0)
+		{
 		fname[i]=va_arg(list, char*);
 		tf[i] = new TFile(fname[i]);
 		//tt[i] = (TTree*) tf[i]->Get("demo/tree");
 		//tt[i] = (TTree*) tf[i]->Get("tree");
 		tt[i] = (TTree*) tf[i]->Get("otree");
+		}
+		cout<<"Debug2"<<endl;
 		th[i] = new TH1F(Form("th%i",i),"",nbins,min,max);
-		tt[i]->Draw(Form("%s>>th%i",var1.c_str(),i), cut.c_str(), "goff");
+		if(i==0)
+		{
+			tt[i]->Draw(Form("%s>>th%i",var1.c_str(),i), cut.c_str(), "goff");
+			cout<<"var1 = "<<var1.c_str()<<endl;
+		}
+		if(i==1)
+		{
+			tt[0]->Draw(Form("%s>>th%i",var2.c_str(),i), cut.c_str(), "goff");
+			cout<<"var2 = "<<var2.c_str()<<endl;
+		}
+		if(i==2)
+		{
+			tt[0]->Draw(Form("%s>>th%i",var3.c_str(),i), cut.c_str(), "goff");
+			cout<<"var3 = "<<var3.c_str()<<endl;
+		}
 		
+		cout<<"Debug3"<<endl;
 		th[i]->SetStats(0);
 		th[i]->SetLineWidth(2);
 		th[i]->SetLineStyle(style[i]);
@@ -81,9 +101,16 @@ void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string va
 		th[i]->GetYaxis()->SetTitleOffset(1.30);
 		th[i]->GetXaxis()->SetTitle(xtitle.c_str());
 		th[i]->GetXaxis()->CenterTitle();
-
+		if (i==0)
 		string tmp_str=va_arg(list,char*);
 
+		if (i==0)
+			tmp_str= "mass_lvj_type0";
+		if (i==1)
+			tmp_str= "mass_lvj_type2";
+		if (i==2)
+			tmp_str= "mass_lvj_run2";
+		cout<<"Debug4"<<endl;
 		if (NormLumi)
 		{
 		if (tmp_str.find("TT")==0) xSec= 0.0653247402978 ;
@@ -136,6 +163,7 @@ void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string va
 		*/
 		}
 		
+		cout<<"Debug5"<<endl;
 		//th[0]->SetMaximum(0.0014);
 		if (i==0) th[i]->Draw(); else th[i]->Draw("sames");
 
