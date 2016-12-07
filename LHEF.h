@@ -1,13 +1,15 @@
 // -*- C++ -*-
-#ifndef THEPEG_LHEF_H
-#define THEPEG_LHEF_H
+#ifndef HEPMC_LHEF_H
+#define HEPMC_LHEF_H
 //
 // This is the declaration of the Les Houches Event File classes,
 // implementing a simple C++ parser/writer for Les Houches Event files.
-// Copyright (C) 2009-2013 Leif Lonnblad
+// Copyright (C) 2009-2016 Leif Lonnblad
 //
-// The code is licenced under version 2 of the GPL, see COPYING for details.
-// Please respect the MCnet academic guidelines, see GUIDELINES for details.
+// The code is licenced under version 2 of the GPL, see COPYING for
+// details.  Please respect the MCnet academic guidelines, see
+// http://montecarlonet.org/index.php?p=Publications/Guidelines for
+// details.
 //
 
 #include <iostream>
@@ -300,11 +302,11 @@ struct XMLTag {
       os << "/>" << std::endl;
       return;
     }
-    os << ">" << std::endl;
+    os << ">";
     for ( int i = 0, N = tags.size(); i < N; ++i )
       tags[i]->print(os);
 
-    os << "````" << contents << "''''</" << name << ">" << std::endl;
+    os << contents << "</" << name << ">" << std::endl;
   }
 
 };
@@ -313,7 +315,7 @@ struct XMLTag {
  * Helper function to make sure that each line in the string \a s starts with a
  * #-character and that the string ends with a new-line.
  */
-std::string hashline(std::string s) {
+inline std::string hashline(std::string s) {
   std::string ret;
   std::istringstream is(s);
   std::string ss;
@@ -453,12 +455,9 @@ struct TagBase {
   /**
    * Static string token for truth values.
    */
-  static const std::string yes;
+  static std::string yes() { return "yes"; }
 
 };
-
-const std::string TagBase::yes("yes");
-
 
 /**
  * The Generator class contains information about a generator used in a run.
@@ -505,14 +504,14 @@ struct XSecInfo : public TagBase {
   /**
    * Intitialize default values.
    */
-  XSecInfo(): neve(-1), maxweight(1.0), meanweight(1.0), negweights(false), 
-	      varweights(false) {}
+  XSecInfo(): neve(-1), totxsec(0.0), maxweight(1.0), meanweight(1.0),
+	      negweights(false), varweights(false) {}
 
   /**
    * Create from XML tag
    */
   XSecInfo(const XMLTag & tag)
-    : TagBase(tag.attr, tag.contents), neve(-1),
+    : TagBase(tag.attr, tag.contents), neve(-1), totxsec(0.0),
       maxweight(1.0), meanweight(1.0), negweights(false), varweights(false) {
     if ( !getattr("neve", neve) ) 
       throw std::runtime_error("Found xsecinfo tag without neve attribute "
@@ -533,8 +532,8 @@ struct XSecInfo : public TagBase {
   void print(std::ostream & file) const {
     file << "<xsecinfo" << oattr("neve", neve) << oattr("totxsec", totxsec)
 	 << oattr("maxweight", maxweight) << oattr("meanweight", meanweight);
-    if ( negweights ) file << oattr("negweights", yes);
-    if ( varweights ) file << oattr("varweights", yes);
+    if ( negweights ) file << oattr("negweights", yes());
+    if ( varweights ) file << oattr("varweights", yes());
     printattrs(file);
     closetag(file, "xsecinfo");
   }
@@ -922,7 +921,7 @@ struct MergeInfo : public TagBase {
   void print(std::ostream & file) const {
     file << "<mergeinfo" << oattr("iproc", iproc);
     if ( mergingscale > 0.0 ) file << oattr("mergingscale", mergingscale);
-    if ( maxmult ) file << oattr("maxmult", yes);
+    if ( maxmult ) file << oattr("maxmult", yes());
     printattrs(file);
     closetag(file, "mergeinfo");
   }
@@ -1494,6 +1493,20 @@ public:
 
 public:
 
+  /**
+   * Return the name of the weight with given index suitable to ne
+   * used for HepMC3 output.
+   */
+  std::string weightNameHepMC(int i) const {
+    std::string name;
+    if ( i < 0 || i >= (int)weightinfo.size() ) return name;
+    if ( weightinfo[i].inGroup >= 0 )
+      name = weightgroup[weightinfo[i].inGroup].type + "/"
+	+  weightgroup[weightinfo[i].inGroup].combine + "/";
+    name += weightinfo[i].name;
+    return name;
+  }
+
 
   /**
    * Print out the corresponding XML tag to a stream.
@@ -1763,27 +1776,27 @@ struct EventGroup: public std::vector<HEPEUP*> {
   /**
    * Initialize default values.
    */
-  EventGroup(): nreal(-1), ncounter(-1) {}
+  inline EventGroup(): nreal(-1), ncounter(-1) {}
 
   /**
    * The copy constructor also copies the included HEPEUP object.
    */
-  EventGroup(const EventGroup &);
+  inline EventGroup(const EventGroup &);
 
   /**
    * The assignment also copies the included HEPEUP object.
    */
-  EventGroup & operator=(const EventGroup &);
+  inline EventGroup & operator=(const EventGroup &);
 
   /**
    * Remove all subevents.
    */
-  void clear();
+  inline void clear();
 
   /**
    * The destructor deletes the included HEPEUP objects.
    */
-  ~EventGroup();
+  inline ~EventGroup();
 
   /**
    * The number of real events in this event group.
@@ -2379,22 +2392,23 @@ public:
 
 // Destructor implemented here.
 
-void EventGroup::clear() {
+inline void EventGroup::clear() {
   while ( size() > 0 ) {
     delete back();
     pop_back();
   }
 }
 
-EventGroup::~EventGroup() {
+inline EventGroup::~EventGroup() {
   clear();
 }
 
-EventGroup::EventGroup(const EventGroup &) {
-  for ( int i = 0, N = size(); i < N; ++i ) at(i) = new HEPEUP(*at(i));
+inline EventGroup::EventGroup(const EventGroup & eg)
+  : std::vector<HEPEUP*>(eg.size()) {
+  for ( int i = 0, N = eg.size(); i < N; ++i ) at(i) = new HEPEUP(*eg.at(i));
 }
 
-EventGroup & EventGroup::operator=(const EventGroup & x) {
+inline EventGroup & EventGroup::operator=(const EventGroup & x) {
   if ( &x == this ) return *this;
   clear();
   nreal = x.nreal;
@@ -2588,7 +2602,7 @@ protected:
    * Used internally to read a single line from the stream.
    */
   bool getline() {
-    return ( std::getline(file, currentLine) );
+    return ( (bool)std::getline(file, currentLine) );
   }
 
   /**
@@ -2844,7 +2858,7 @@ private:
 
 }
 
-/** \example LHEFCat.cc This is a main function which simply reads a
+/* \example LHEFCat.cc This is a main function which simply reads a
     Les Houches Event File from the standard input and writes it again
     to the standard output. 
     This file can be downloaded from
@@ -2854,7 +2868,7 @@ private:
     to try it on.
 */
 
-/**\mainpage Les Houches Event File
+/* \mainpage Les Houches Event File
 
 Here are some example classes for reading and writing Les Houches
 Event Files according to the
@@ -2894,4 +2908,4 @@ workshop at CERN 2006.
  */
 
 
-#endif /* THEPEG_LHEF_H */
+#endif /* HEPMC_LHEF_H */

@@ -93,7 +93,7 @@ int main (int argc, char **argv) {
     
     //gSystem->Load("libPhysics");
 
- TApplication a("a", 0, 0); // just to make sure that the autoloading of ROOT libraries works
+// TApplication a("a", 0, 0); // just to make sure that the autoloading of ROOT libraries works
 
     TFile file(argv[2],"RECREATE");
     file.SetCompressionLevel(2);
