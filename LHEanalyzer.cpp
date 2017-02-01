@@ -190,6 +190,7 @@ int main (int argc, char **argv) {
     int count = 0;
     int NSignal = 0;
     int NTotal = 0;
+    double SM_Weight = 0.0;
     
     std::ifstream ifsbkg (argv[1]) ;
     // Create the Reader object
@@ -203,8 +204,23 @@ int main (int argc, char **argv) {
     while ( bkgReader.readEvent () ) {
         ++BKGnumber;
         if (BKGnumber % 1000 == 0) std::cout << "BKG event " << BKGnumber << "\n" ;
-        //if (BKGnumber > 500000) break;
+        //if (BKGnumber > 1) break;
+	/*
+	    std::cout<< "Number of particles = "<<bkgReader.hepeup.NUP<<std::endl;
+	    std::cout<< "Event weight = "<<bkgReader.hepeup.XWGTUP<<std::endl;
+	    std::cout<<"rwgt size = "<<bkgReader.hepeup.namedweights.size()<<std::endl;
+	    std::cout<<"rwgt size = "<<bkgReader.hepeup.weights.size()<<std::endl;
+	*/
+	    for (int iPart = 0 ; iPart < bkgReader.hepeup.namedweights.size(); ++iPart){
+	    if (bkgReader.hepeup.namedweights[iPart].name == "fs0_0p0")
+	    {
+	    //std::cout<<iPart+1<<"\tWeight info : "<<std::scientific<<bkgReader.hepeup.namedweights[iPart].weights[0]<<"\t"<< bkgReader.hepeup.namedweights[iPart].name <<std::endl;
+	    //std::cout<<iPart+1<<"\tWeight info : "<<std::setprecision(10)<<bkgReader.hepeup.namedweights[iPart].weights[0]<<"\t"<< bkgReader.hepeup.namedweights[iPart].name <<std::endl;
+	    SM_Weight = bkgReader.hepeup.namedweights[iPart].weights[0];
+	    }
+	    }
         
+
         std::vector<int> leptons ;      
         std::vector<int> finalQuarks ;      
         std::vector<int> intermediates ;
@@ -215,12 +231,6 @@ int main (int argc, char **argv) {
         for (int iPart = 0 ; iPart < bkgReader.hepeup.IDUP.size (); ++iPart){
             
             int mother1 = bkgReader.hepeup.MOTHUP.at(iPart).first;
-            
-//            std::cout << "\t part type [" << iPart << "] " << bkgReader.hepeup.IDUP.at (iPart)
-//            << "\t status " << bkgReader.hepeup.ISTUP.at(iPart)
-//            << "\t mother " << bkgReader.hepeup.MOTHUP.at(iPart).first
-//            << "\t mother id " << bkgReader.hepeup.IDUP.at(mother1)
-//            << "\n" ;
 
             //PG incoming particle          
             if (bkgReader.hepeup.ISTUP.at (iPart) == -1){
@@ -408,7 +418,7 @@ int main (int argc, char **argv) {
 		Lep0_py	 = bkgReader.hepeup.PUP.at(i_olep_part).at(1);
 		Lep0_pz	 = bkgReader.hepeup.PUP.at(i_olep_part).at(2);
 		Lep0_E	 = bkgReader.hepeup.PUP.at(i_olep_part).at(3);
-		Lep0_pt  = fs_lep0.Pt();
+		Lep0_pt  = fs_lep0.Pt()*SM_Weight;
 		Lep0_eta = fs_lep0.Eta();
 		Lep0_phi = fs_lep0.Phi();
 		Lep0_theta = fs_lep0.Phi();
