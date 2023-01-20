@@ -5,6 +5,8 @@ LHEAnalyzers
 
 ```bash
 c++ -o LHEanalyzer `root-config --glibs --cflags` LHEanalyzer.cpp
+
+./LHEanalyzer /eos/user/a/anmehta/WmWpToLmNujj_01j_aTGC_pTW-150toInf_mWV-150to600_4f_NLO_FXFX/cmsgrid_final_seed7898675.lhe cmsgrid_final_seed7898675.root
 ```
 
 

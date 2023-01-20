@@ -211,21 +211,22 @@ int main(int argc, char **argv)
             std::cout<<"rwgt size = "<<bkgReader.hepeup.namedweights.size()<<std::endl;
             std::cout<<"rwgt size = "<<bkgReader.hepeup.weights.size()<<std::endl;
         */
-        for (int iPart = 0; iPart < bkgReader.hepeup.namedweights.size(); ++iPart)
-        {
-            if (bkgReader.hepeup.namedweights[iPart].name == "fs0_0p0")
-            {
-                // std::cout<<iPart+1<<"\tWeight info : "<<std::scientific<<bkgReader.hepeup.namedweights[iPart].weights[0]<<"\t"<< bkgReader.hepeup.namedweights[iPart].name <<std::endl;
-                // std::cout<<iPart+1<<"\tWeight info : "<<std::setprecision(10)<<bkgReader.hepeup.namedweights[iPart].weights[0]<<"\t"<< bkgReader.hepeup.namedweights[iPart].name <<std::endl;
-                SM_Weight = bkgReader.hepeup.namedweights[iPart].weights[0];
-            }
-        }
+        // for (int iPart = 0; iPart < bkgReader.hepeup.namedweights.size(); ++iPart)
+        // {
+        //     if (bkgReader.hepeup.namedweights[iPart].name == "fs0_0p0")
+        //     {
+        //         // std::cout<<iPart+1<<"\tWeight info : "<<std::scientific<<bkgReader.hepeup.namedweights[iPart].weights[0]<<"\t"<< bkgReader.hepeup.namedweights[iPart].name <<std::endl;
+        //         // std::cout<<iPart+1<<"\tWeight info : "<<std::setprecision(10)<<bkgReader.hepeup.namedweights[iPart].weights[0]<<"\t"<< bkgReader.hepeup.namedweights[iPart].name <<std::endl;
+        //         SM_Weight = bkgReader.hepeup.namedweights[iPart].weights[0];
+        //     }
+        // }
 
         std::vector<int> leptons;
         std::vector<int> finalQuarks;
         std::vector<int> intermediates;
         std::vector<int> tops;
         TLorentzVector Is_Iqrk1, Is_Iqrk0;
+
         // PG loop over particles in the event
         int incomingPart = 0;
         for (int iPart = 0; iPart < bkgReader.hepeup.IDUP.size(); ++iPart)
@@ -305,6 +306,9 @@ int main(int argc, char **argv)
         int signalWCtr = 0;
         isMuMinus = 0;
 
+        // std::cout << "L309: leptons.size(): " << leptons.size() << std::endl;
+        // std::cout << "L309: finalQuarks.size(): " << finalQuarks.size() << std::endl;
+
         if (leptons.size() == 2)
         {
             if (bkgReader.hepeup.IDUP.at(leptons.at(0)) > 0)
@@ -328,11 +332,14 @@ int main(int argc, char **argv)
         }
         else
         {
-            std::cout << "Problem!" << std::endl;
+            std::cout << "Problem!: Lepton size: " << leptons.size() << std::endl;
         }
 
+        // std::cout << "L338: leptons.size(): " << leptons.size() << std::endl;
+        // std::cout << "L338: finalQuarks.size(): " << finalQuarks.size() << std::endl;
+
         // --------------- If signal, find the quarks from the W  -------------------
-        if (finalQuarks.size() == 4)
+        if (finalQuarks.size() == 2)
         {
             for (unsigned int a = 0; a < finalQuarks.size(); ++a)
             {
@@ -359,15 +366,16 @@ int main(int argc, char **argv)
         }
         else
         {
-            std::cout << "Problem!" << std::endl;
+            std::cout << "Problem!: Final quark size: " << finalQuarks.size() << std::endl;
         }
 
-        if (signalWCtr == 4 && tops.size() == 0)
+        if (signalWCtr == 2 && tops.size() == 0)
         {
             signalFlag = 1;
             NSignal++;
         }
 
+        // std::cout << "L378# finalQuarks size: " << finalQuarks.size() << std::endl;
         // --------------- Assign quarks based on W invariant mass -------------------
         float distanceToWMass = 9999.;
         for (unsigned int a = 0; a < finalQuarks.size(); ++a)
@@ -396,6 +404,7 @@ int main(int argc, char **argv)
                 }
             }
         }
+        // std::cout << "L407# finalQuarks size: " << finalQuarks.size() << std::endl;
 
         // quarks based on particle-antiparticle
         if (bkgReader.hepeup.IDUP.at(i_wqrk_1) < 0)
@@ -488,35 +497,35 @@ int main(int argc, char **argv)
         Wqrk1_phi = fs_Wqrk1.Phi();
         Wqrk1_theta = fs_Wqrk1.Phi();
 
-        TLorentzVector fs_Iqrk0(
-            bkgReader.hepeup.PUP.at(i_iqrk_1).at(0), // PG px
-            bkgReader.hepeup.PUP.at(i_iqrk_1).at(1), // PG py
-            bkgReader.hepeup.PUP.at(i_iqrk_1).at(2), // PG pz
-            bkgReader.hepeup.PUP.at(i_iqrk_1).at(3)  // PG E
-        );
-        Iqrk0_px = bkgReader.hepeup.PUP.at(i_iqrk_1).at(0);
-        Iqrk0_py = bkgReader.hepeup.PUP.at(i_iqrk_1).at(1);
-        Iqrk0_pz = bkgReader.hepeup.PUP.at(i_iqrk_1).at(2);
-        Iqrk0_E = bkgReader.hepeup.PUP.at(i_iqrk_1).at(3);
-        Iqrk0_pt = fs_Iqrk0.Pt();
-        Iqrk0_eta = fs_Iqrk0.Eta();
-        Iqrk0_phi = fs_Iqrk0.Phi();
-        Iqrk0_theta = fs_Iqrk0.Phi();
+        // TLorentzVector fs_Iqrk0(
+        //     bkgReader.hepeup.PUP.at(i_iqrk_1).at(0), // PG px
+        //     bkgReader.hepeup.PUP.at(i_iqrk_1).at(1), // PG py
+        //     bkgReader.hepeup.PUP.at(i_iqrk_1).at(2), // PG pz
+        //     bkgReader.hepeup.PUP.at(i_iqrk_1).at(3)  // PG E
+        // );
+        // Iqrk0_px = bkgReader.hepeup.PUP.at(i_iqrk_1).at(0);
+        // Iqrk0_py = bkgReader.hepeup.PUP.at(i_iqrk_1).at(1);
+        // Iqrk0_pz = bkgReader.hepeup.PUP.at(i_iqrk_1).at(2);
+        // Iqrk0_E = bkgReader.hepeup.PUP.at(i_iqrk_1).at(3);
+        // Iqrk0_pt = fs_Iqrk0.Pt();
+        // Iqrk0_eta = fs_Iqrk0.Eta();
+        // Iqrk0_phi = fs_Iqrk0.Phi();
+        // Iqrk0_theta = fs_Iqrk0.Phi();
 
-        TLorentzVector fs_Iqrk1(
-            bkgReader.hepeup.PUP.at(i_iqrk_2).at(0), // PG px
-            bkgReader.hepeup.PUP.at(i_iqrk_2).at(1), // PG py
-            bkgReader.hepeup.PUP.at(i_iqrk_2).at(2), // PG pz
-            bkgReader.hepeup.PUP.at(i_iqrk_2).at(3)  // PG E
-        );
-        Iqrk1_px = bkgReader.hepeup.PUP.at(i_iqrk_2).at(0);
-        Iqrk1_py = bkgReader.hepeup.PUP.at(i_iqrk_2).at(1);
-        Iqrk1_pz = bkgReader.hepeup.PUP.at(i_iqrk_2).at(2);
-        Iqrk1_E = bkgReader.hepeup.PUP.at(i_iqrk_2).at(3);
-        Iqrk1_pt = fs_Iqrk1.Pt();
-        Iqrk1_eta = fs_Iqrk1.Eta();
-        Iqrk1_phi = fs_Iqrk1.Phi();
-        Iqrk1_theta = fs_Iqrk1.Phi();
+        // TLorentzVector fs_Iqrk1(
+        //     bkgReader.hepeup.PUP.at(i_iqrk_2).at(0), // PG px
+        //     bkgReader.hepeup.PUP.at(i_iqrk_2).at(1), // PG py
+        //     bkgReader.hepeup.PUP.at(i_iqrk_2).at(2), // PG pz
+        //     bkgReader.hepeup.PUP.at(i_iqrk_2).at(3)  // PG E
+        // );
+        // Iqrk1_px = bkgReader.hepeup.PUP.at(i_iqrk_2).at(0);
+        // Iqrk1_py = bkgReader.hepeup.PUP.at(i_iqrk_2).at(1);
+        // Iqrk1_pz = bkgReader.hepeup.PUP.at(i_iqrk_2).at(2);
+        // Iqrk1_E = bkgReader.hepeup.PUP.at(i_iqrk_2).at(3);
+        // Iqrk1_pt = fs_Iqrk1.Pt();
+        // Iqrk1_eta = fs_Iqrk1.Eta();
+        // Iqrk1_phi = fs_Iqrk1.Phi();
+        // Iqrk1_theta = fs_Iqrk1.Phi();
 
         TLorentzVector p4_WHad = fs_Wqrk0 + fs_Wqrk1;
         TLorentzVector p4_WLep = fs_lep0 + fs_lep1;
@@ -531,17 +540,17 @@ int main(int argc, char **argv)
         mWHad = (float)p4_WHad.M();
         costheta1 = (float)a_costheta1;
         costheta2 = (float)a_costheta2;
-        costhetaV1 = (float)((fs_Iqrk0 - Is_Iqrk0).Theta() - fs_Wqrk0.Theta());
-        costhetaV2 = (float)((fs_Iqrk0 - Is_Iqrk1).Theta() - fs_Wqrk0.Theta());
-        costhetaV3 = (float)((fs_Iqrk0 - Is_Iqrk0).Theta() - fs_Wqrk1.Theta());
-        costhetaV4 = (float)((fs_Iqrk0 - Is_Iqrk1).Theta() - fs_Wqrk1.Theta());
+        // costhetaV1 = (float)((fs_Iqrk0 - Is_Iqrk0).Theta() - fs_Wqrk0.Theta());
+        // costhetaV2 = (float)((fs_Iqrk0 - Is_Iqrk1).Theta() - fs_Wqrk0.Theta());
+        // costhetaV3 = (float)((fs_Iqrk0 - Is_Iqrk0).Theta() - fs_Wqrk1.Theta());
+        // costhetaV4 = (float)((fs_Iqrk0 - Is_Iqrk1).Theta() - fs_Wqrk1.Theta());
         phi = (float)a_Phi;
         costhetastar = (float)a_costhetastar;
         phi1 = (float)a_Phi1;
 
-        dEtajj = (float)fabs(fs_Iqrk0.Eta() - fs_Iqrk1.Eta());
-        dPhijj = (float)deltaPhi(fs_Iqrk0.Phi(), fs_Iqrk1.Phi());
-        mjj = (float)(fs_Iqrk0 + fs_Iqrk1).M();
+        // dEtajj = (float)fabs(fs_Iqrk0.Eta() - fs_Iqrk1.Eta());
+        // dPhijj = (float)deltaPhi(fs_Iqrk0.Phi(), fs_Iqrk1.Phi());
+        // mjj = (float)(fs_Iqrk0 + fs_Iqrk1).M();
 
         isSignal = signalFlag;
 
