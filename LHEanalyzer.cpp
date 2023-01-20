@@ -195,8 +195,12 @@ int main(int argc, char **argv)
     LHEF::Reader bkgReader(ifsbkg);
 
     std::vector<int> initialQuarks_;
-    // AddBranch(&initialQuarks_,"initialQuarks");
+    std::vector<int> outgoingParticles_;
+    std::vector<int> intermediateParticles_;
+
     tree->Branch("initialQuarks", &initialQuarks_);
+    tree->Branch("outgoingParticles", &outgoingParticles_);
+    tree->Branch("intermediateParticles", &intermediateParticles_);
 
     // PG loop over BKG
     while (bkgReader.readEvent())
@@ -264,6 +268,7 @@ int main(int argc, char **argv)
             // PG outgoing particles
             if (bkgReader.hepeup.ISTUP.at(iPart) == 1)
             {
+                outgoingParticles_.push_back(bkgReader.hepeup.IDUP.at(iPart));
                 // PG leptons
                 if (abs(bkgReader.hepeup.IDUP.at(iPart)) == 11 || // PG electron
                     abs(bkgReader.hepeup.IDUP.at(iPart)) == 13 || // PG muon
@@ -283,6 +288,7 @@ int main(int argc, char **argv)
             // PG intermediates
             if (bkgReader.hepeup.ISTUP.at(iPart) == 2)
             {
+                intermediateParticles_.push_back(bkgReader.hepeup.IDUP.at(iPart));
                 intermediates.push_back(iPart);
             }
 
@@ -339,7 +345,7 @@ int main(int argc, char **argv)
         // std::cout << "L338: finalQuarks.size(): " << finalQuarks.size() << std::endl;
 
         // --------------- If signal, find the quarks from the W  -------------------
-        if (finalQuarks.size() == 2)
+        if (finalQuarks.size() >= 2)
         {
             for (unsigned int a = 0; a < finalQuarks.size(); ++a)
             {
@@ -556,7 +562,8 @@ int main(int argc, char **argv)
 
         tree->Fill();
         initialQuarks_.clear();
-
+        outgoingParticles_.clear();
+        intermediateParticles_.clear();
         //	if (BKGnumber > 24000)  break;
     }
 
@@ -568,7 +575,8 @@ int main(int argc, char **argv)
 
     std::cout << "Count = " << count << std::endl;
     std::cout << "initialQuarks_ = " << initialQuarks_.size() << std::endl;
-
+    std::cout << "outgoingParticles_ = " << outgoingParticles_.size() << std::endl;
+    std::cout << "intermediateParticles_ = " << intermediateParticles_.size() << std::endl;
     // Now we are done.
     return 0;
 }

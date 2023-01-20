@@ -5,8 +5,6 @@ LHEAnalyzers
 
 ```bash
 c++ -o LHEanalyzer `root-config --glibs --cflags` LHEanalyzer.cpp
-
-./LHEanalyzer /eos/user/a/anmehta/WmWpToLmNujj_01j_aTGC_pTW-150toInf_mWV-150to600_4f_NLO_FXFX/cmsgrid_final_seed7898675.lhe cmsgrid_final_seed7898675.root
 ```
 
 
@@ -15,6 +13,14 @@ c++ -o LHEanalyzer `root-config --glibs --cflags` LHEanalyzer.cpp
 ```bash
 ./LHEanalyzer  /path/of/inputFile.lhe   /path/of/outputfile/filename.root
 ```
+
+**To run over all LHE file present in a directory**
+
+```bash
+python3 run_lhe.py
+```
+
+In the above script you just need to update the path where the LHE files are present (also the output root file name) and run.
 
 **Location of files to run on:**
 
