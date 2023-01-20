@@ -3,15 +3,16 @@ LHEAnalyzers
 
 **To compile:**
 
-c++ -o LHEanalyzer &#39;root-config --glibs --cflags&#39; LHEanalyzer.cpp
-
-Note: instead of &#39; in above command use the key just before 1 for similar to &#39;
+```bash
+c++ -o LHEanalyzer `root-config --glibs --cflags` LHEanalyzer.cpp
+```
 
 
 **To run:**
 
+```bash
 ./LHEanalyzer  /path/of/inputFile.lhe   /path/of/outputfile/filename.root
-
+```
 
 **Location of files to run on:**
 
