@@ -1,11 +1,11 @@
 /*
-this program plots one branch of different trees on the same histogram 
+this program plots one branch of different trees on the same histogram
 
 var1 is the variable that we want to plot
 
 var2 is the xtitle
 
-n is the number of input rootfiles 
+n is the number of input rootfiles
 
 format to enter
 
@@ -20,12 +20,12 @@ abc.root is the name of root file  --->>> abc is the legend of abc.root;   simil
 
 //double 13TeVScale(
 void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string var1, string var2, string var3, string xtitle, int nbins, float min, float max, string cut="",int n,...){
-	
+
 	int countVar = 0;
 	float a1=0.29;
 	float a2;
 		if (n<=3) a2=0.59;
-		else 
+		else
 		if (n==4) a2=0.42;
 		else
 		{
@@ -46,7 +46,7 @@ void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string va
 	if (xtitle == "") xtitle = var1;
 	if (var2 != "")	countVar++;
 	if (var3 != "") countVar++;
-	
+
 	//	cout<<var1<<"\t"<<var2<<endl;
 
 	gStyle->SetOptStat(0);
@@ -90,13 +90,13 @@ void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string va
 			tt[0]->Draw(Form("%s>>th%i",var3.c_str(),i), cut.c_str(), "goff");
 			cout<<"var3 = "<<var3.c_str()<<endl;
 		}
-		
+
 		cout<<"Debug3"<<endl;
 		th[i]->SetStats(0);
 		th[i]->SetLineWidth(2);
 		th[i]->SetLineStyle(style[i]);
 		th[i]->SetLineColor(color[i]);
-		
+
 		th[i]->GetYaxis()->CenterTitle();
 		th[i]->GetYaxis()->SetTitleOffset(1.30);
 		th[i]->GetXaxis()->SetTitle(xtitle.c_str());
@@ -127,7 +127,7 @@ void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string va
 		th[i]->Scale((Lumi*xSec)/th[i]->Integral());
 
 		//cout<<"Max after scale = "<<th[i]->GetMaximum()<<endl;
-		
+
 		#if 0
 		th[0]->SetMaximum(TMath::Max(th[i]->GetMaximum(th[i]->GetMaximumBin())*1.10,yMax));
 		yMax = TMath::Max(th[i]->GetMaximum(th[i]->GetMaximumBin())*1.10,yMax);
@@ -150,11 +150,11 @@ void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string va
 		th[i]->GetYaxis()->SetTitle("Fraction of Events");
 		th[0]->SetMaximum(TMath::Max(th[i]->GetMaximum()*1.10,yMax));
 		yMax = TMath::Max(th[i]->GetMaximum()*1.10,yMax);
-		 
+
 		/*
 		 * Normalized one histogram with another
 		 */
-		/* 
+		/*
 		if (i==0) float num = th[i]->Integral();
 		if (i==1) th[i]->Scale(num/(th[i]->Integral()));
 		th[i]->GetYaxis()->SetTitle("Number of Events");
@@ -162,7 +162,7 @@ void compareQuantities(bool NormUnity, bool NormLumi, bool ShowEvents, string va
 		yMax = TMath::Max(th[i]->GetMaximum()*1.10,yMax);
 		*/
 		}
-		
+
 		cout<<"Debug5"<<endl;
 		//th[0]->SetMaximum(0.0014);
 		if (i==0) th[i]->Draw(); else th[i]->Draw("sames");

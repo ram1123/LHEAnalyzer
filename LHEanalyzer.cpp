@@ -99,7 +99,7 @@ int main(int argc, char **argv)
     //   TFile file("phantom.root","RECREATE");
     TTree *tree = new TTree("tree", "Particles Info");
 
-    float mWW, mWLep, mWHad, costheta1, costheta2, costhetastar, phi, phi1;
+    float mWW, mWW_PDG, mTWW, mWLep, mWHad, costheta1, costheta2, costhetastar, phi, phi1;
     float costhetaV1, costhetaV2;
     float costhetaV3, costhetaV4;
     float dEtajj, dPhijj, mjj;
@@ -161,6 +161,8 @@ int main(int argc, char **argv)
     tree->Branch("Lep0_py", &Lep0_py, "Lep0_py/F");
     tree->Branch("Lep0_px", &Lep0_px, "Lep0_px/F");
     tree->Branch("mWW", &mWW, "mWW/F");
+    tree->Branch("mWW_PDG", &mWW_PDG, "mWW_PDG/F");
+    tree->Branch("mTWW", &mTWW, "mTWW/F");
     tree->Branch("mWLep", &mWLep, "mWLep/F");
     tree->Branch("mWHad", &mWHad, "mWHad/F");
     tree->Branch("costheta1", &costheta1, "costheta1/F");
@@ -197,6 +199,7 @@ int main(int argc, char **argv)
     std::vector<int> initialQuarks_;
     std::vector<int> outgoingParticles_;
     std::vector<int> intermediateParticles_;
+    TLorentzVector qrk0_WPDG, qrk1_WPDG, Wqq_UsingPDG;
 
     tree->Branch("initialQuarks", &initialQuarks_);
     tree->Branch("outgoingParticles", &outgoingParticles_);
@@ -261,7 +264,7 @@ int main(int argc, char **argv)
                         bkgReader.hepeup.PUP.at(incomingPart).at(3)  // PG E
                     );
                 }
-                // std::cout<<"incoming particle = "<<incomingPart<<std::endl;
+                // std::cout << "incoming particle = " << incomingPart << std::endl;
                 count++;
             }
 
@@ -351,13 +354,41 @@ int main(int argc, char **argv)
             {
                 int tmpMoth = bkgReader.hepeup.MOTHUP.at(finalQuarks.at(a)).first - 1;
 
+                // std::cout << "tmpMoth: " << tmpMoth << " PDG ID: " << bkgReader.hepeup.IDUP.at(tmpMoth) << " " << bkgReader.hepeup.PUP.at(finalQuarks.at(a)).at(0) << ", " << bkgReader.hepeup.PUP.at(finalQuarks.at(a)).at(1) << std::endl;
+                // std::cout << "tmpMoth: " << tmpMoth << " PDG ID: " << bkgReader.hepeup.IDUP.at(tmpMoth) << " " << bkgReader.hepeup.PUP.at(tmpMoth).at(0) << ", " << bkgReader.hepeup.PUP.at(tmpMoth).at(1) << ", " << bkgReader.hepeup.PUP.at(tmpMoth).at(2) << ", " << bkgReader.hepeup.PUP.at(tmpMoth).at(3) << ", " << bkgReader.hepeup.PUP.at(tmpMoth).at(4) << std::endl;
+                // std::cout << " " << std::endl;
+
+
                 if (abs(bkgReader.hepeup.IDUP.at(tmpMoth)) == 24 && bkgReader.hepeup.IDUP.at(finalQuarks.at(a)) > 0)
                 {
                     signalWCtr++;
+                    TLorentzVector q_temp(
+                        bkgReader.hepeup.PUP.at(finalQuarks.at(a)).at(0), // PG px
+                        bkgReader.hepeup.PUP.at(finalQuarks.at(a)).at(1), // PG py
+                        bkgReader.hepeup.PUP.at(finalQuarks.at(a)).at(2), // PG pz
+                        bkgReader.hepeup.PUP.at(finalQuarks.at(a)).at(3)  // PG E
+                    );
+                    TLorentzVector temp(
+                        bkgReader.hepeup.PUP.at(tmpMoth).at(0), // PG px
+                        bkgReader.hepeup.PUP.at(tmpMoth).at(1), // PG py
+                        bkgReader.hepeup.PUP.at(tmpMoth).at(2), // PG pz
+                        bkgReader.hepeup.PUP.at(tmpMoth).at(3)  // PG E
+                    );
+                    qrk0_WPDG = q_temp;
+                    Wqq_UsingPDG = temp;
+                    // std::cout << "Wqq_UsingPDG mass: " << Wqq_UsingPDG.M() << std::endl;
+                    // std::cout << " " << std::endl;
                 }
                 if (abs(bkgReader.hepeup.IDUP.at(tmpMoth)) == 24 && bkgReader.hepeup.IDUP.at(finalQuarks.at(a)) < 0)
                 {
                     signalWCtr++;
+                    TLorentzVector q_temp(
+                        bkgReader.hepeup.PUP.at(finalQuarks.at(a)).at(0), // PG px
+                        bkgReader.hepeup.PUP.at(finalQuarks.at(a)).at(1), // PG py
+                        bkgReader.hepeup.PUP.at(finalQuarks.at(a)).at(2), // PG pz
+                        bkgReader.hepeup.PUP.at(finalQuarks.at(a)).at(3)  // PG E
+                    );
+                    qrk1_WPDG = q_temp;
                 }
                 if (abs(bkgReader.hepeup.IDUP.at(tmpMoth)) != 24 && tmpfill1)
                 {
@@ -375,7 +406,7 @@ int main(int argc, char **argv)
             std::cout << "Problem!: Final quark size: " << finalQuarks.size() << std::endl;
         }
 
-        if (signalWCtr == 2 && tops.size() == 0)
+        if (signalWCtr >= 2 && tops.size() == 0)
         {
             signalFlag = 1;
             NSignal++;
@@ -503,60 +534,31 @@ int main(int argc, char **argv)
         Wqrk1_phi = fs_Wqrk1.Phi();
         Wqrk1_theta = fs_Wqrk1.Phi();
 
-        // TLorentzVector fs_Iqrk0(
-        //     bkgReader.hepeup.PUP.at(i_iqrk_1).at(0), // PG px
-        //     bkgReader.hepeup.PUP.at(i_iqrk_1).at(1), // PG py
-        //     bkgReader.hepeup.PUP.at(i_iqrk_1).at(2), // PG pz
-        //     bkgReader.hepeup.PUP.at(i_iqrk_1).at(3)  // PG E
-        // );
-        // Iqrk0_px = bkgReader.hepeup.PUP.at(i_iqrk_1).at(0);
-        // Iqrk0_py = bkgReader.hepeup.PUP.at(i_iqrk_1).at(1);
-        // Iqrk0_pz = bkgReader.hepeup.PUP.at(i_iqrk_1).at(2);
-        // Iqrk0_E = bkgReader.hepeup.PUP.at(i_iqrk_1).at(3);
-        // Iqrk0_pt = fs_Iqrk0.Pt();
-        // Iqrk0_eta = fs_Iqrk0.Eta();
-        // Iqrk0_phi = fs_Iqrk0.Phi();
-        // Iqrk0_theta = fs_Iqrk0.Phi();
-
-        // TLorentzVector fs_Iqrk1(
-        //     bkgReader.hepeup.PUP.at(i_iqrk_2).at(0), // PG px
-        //     bkgReader.hepeup.PUP.at(i_iqrk_2).at(1), // PG py
-        //     bkgReader.hepeup.PUP.at(i_iqrk_2).at(2), // PG pz
-        //     bkgReader.hepeup.PUP.at(i_iqrk_2).at(3)  // PG E
-        // );
-        // Iqrk1_px = bkgReader.hepeup.PUP.at(i_iqrk_2).at(0);
-        // Iqrk1_py = bkgReader.hepeup.PUP.at(i_iqrk_2).at(1);
-        // Iqrk1_pz = bkgReader.hepeup.PUP.at(i_iqrk_2).at(2);
-        // Iqrk1_E = bkgReader.hepeup.PUP.at(i_iqrk_2).at(3);
-        // Iqrk1_pt = fs_Iqrk1.Pt();
-        // Iqrk1_eta = fs_Iqrk1.Eta();
-        // Iqrk1_phi = fs_Iqrk1.Phi();
-        // Iqrk1_theta = fs_Iqrk1.Phi();
-
         TLorentzVector p4_WHad = fs_Wqrk0 + fs_Wqrk1;
+        TLorentzVector p4_WHad_WPDG = qrk0_WPDG + qrk1_WPDG; // Wqq_UsingPDG
         TLorentzVector p4_WLep = fs_lep0 + fs_lep1;
         TLorentzVector p4_WW = p4_WHad + p4_WLep;
+        // TLorentzVector p4_WW_PDG = p4_WHad_WPDG + p4_WLep;
+        TLorentzVector p4_WW_PDG = Wqq_UsingPDG + p4_WLep;
 
-        double a_costheta1, a_costheta2, a_costhetastar, a_Phi, a_Phi1;
+        // std::cout << "Mass: p4_WHad = " << p4_WHad.M() << ", Wqq_UsingPDG = " << Wqq_UsingPDG.M() << std::endl;
+
+        double a_costheta1,
+            a_costheta2, a_costhetastar, a_Phi, a_Phi1;
         computeAngles(p4_WW, p4_WLep, fs_lep0, fs_lep1, p4_WHad, fs_Wqrk0, fs_Wqrk1,
                       a_costheta1, a_costheta2, a_Phi, a_costhetastar, a_Phi1);
 
         mWW = (float)p4_WW.M();
+        mWW_PDG = (float)p4_WW_PDG.M();
+        // std::cout << "mWW = " << mWW << ", mWW_PDG = " << mWW_PDG  << "\n\n\n====="<< std::endl;
+        mTWW = (float)p4_WW.Mt();
         mWLep = (float)p4_WLep.M();
         mWHad = (float)p4_WHad.M();
         costheta1 = (float)a_costheta1;
         costheta2 = (float)a_costheta2;
-        // costhetaV1 = (float)((fs_Iqrk0 - Is_Iqrk0).Theta() - fs_Wqrk0.Theta());
-        // costhetaV2 = (float)((fs_Iqrk0 - Is_Iqrk1).Theta() - fs_Wqrk0.Theta());
-        // costhetaV3 = (float)((fs_Iqrk0 - Is_Iqrk0).Theta() - fs_Wqrk1.Theta());
-        // costhetaV4 = (float)((fs_Iqrk0 - Is_Iqrk1).Theta() - fs_Wqrk1.Theta());
         phi = (float)a_Phi;
         costhetastar = (float)a_costhetastar;
         phi1 = (float)a_Phi1;
-
-        // dEtajj = (float)fabs(fs_Iqrk0.Eta() - fs_Iqrk1.Eta());
-        // dPhijj = (float)deltaPhi(fs_Iqrk0.Phi(), fs_Iqrk1.Phi());
-        // mjj = (float)(fs_Iqrk0 + fs_Iqrk1).M();
 
         isSignal = signalFlag;
 
@@ -581,9 +583,9 @@ int main(int argc, char **argv)
     return 0;
 }
 
-//////////////////////////////////
-//// P A P E R   4 - V E C T O R   D E F I N I T I O N   O F   P H I   A N D   P H I 1
-//////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// P A P E R   4 - V E C T O R   D E F I N I T I O N   O F   P H I   A N D   P H I 1
+//////////////////////////////////////////////////////////////////////////
 void computeAngles(TLorentzVector thep4H, TLorentzVector thep4Z1, TLorentzVector thep4M11, TLorentzVector thep4M12, TLorentzVector thep4Z2, TLorentzVector thep4M21, TLorentzVector thep4M22, double &costheta1, double &costheta2, double &Phi, double &costhetastar, double &Phi1)
 {
 
