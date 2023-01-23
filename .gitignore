@@ -1,3 +1,4 @@
 LHEanalyzer
 *.root
 *.pdf
+.__afs*
