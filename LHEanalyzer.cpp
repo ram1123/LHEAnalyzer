@@ -85,6 +85,7 @@ double deltaPhi(double phi1, double phi2)
     return deltaphi;
 }
 
+bool Verbose = false;
 //! ========================================================================================
 
 int main(int argc, char **argv)
@@ -99,7 +100,7 @@ int main(int argc, char **argv)
     //   TFile file("phantom.root","RECREATE");
     TTree *tree = new TTree("tree", "Particles Info");
 
-    float mWW, mWW_PDG, mTWW, mWLep, mWHad, costheta1, costheta2, costhetastar, phi, phi1;
+    float mWW, mWW_PDG, mTWW, mWLep, WLep_pT, mWHad, WHad_pT, costheta1, costheta2, costhetastar, phi, phi1;
     float costhetaV1, costhetaV2;
     float costhetaV3, costhetaV4;
     float dEtajj, dPhijj, mjj;
@@ -164,7 +165,9 @@ int main(int argc, char **argv)
     tree->Branch("mWW_PDG", &mWW_PDG, "mWW_PDG/F");
     tree->Branch("mTWW", &mTWW, "mTWW/F");
     tree->Branch("mWLep", &mWLep, "mWLep/F");
+    tree->Branch("WLep_pT", &WLep_pT, "WLep_pT/F");
     tree->Branch("mWHad", &mWHad, "mWHad/F");
+    tree->Branch("WHad_pT", &WHad_pT, "WHad_pT/F");
     tree->Branch("costheta1", &costheta1, "costheta1/F");
     tree->Branch("costheta2", &costheta2, "costheta2/F");
     tree->Branch("costhetaV1", &costhetaV1, "costhetaV1/F");
@@ -210,8 +213,8 @@ int main(int argc, char **argv)
     {
         ++BKGnumber;
         if (BKGnumber % 1000 == 0)
-            std::cout << "BKG event " << BKGnumber << "\n";
-        // if (BKGnumber > 1) break;
+            std::cout << "====> BKG event " << BKGnumber << "\n";
+        // if (BKGnumber > 10) break;
         /*
             std::cout<< "Number of particles = "<<bkgReader.hepeup.NUP<<std::endl;
             std::cout<< "Event weight = "<<bkgReader.hepeup.XWGTUP<<std::endl;
@@ -230,6 +233,7 @@ int main(int argc, char **argv)
 
         std::vector<int> leptons;
         std::vector<int> finalQuarks;
+        std::vector<int> finalGluons;
         std::vector<int> intermediates;
         std::vector<int> tops;
         TLorentzVector Is_Iqrk1, Is_Iqrk0;
@@ -269,8 +273,9 @@ int main(int argc, char **argv)
             }
 
             // PG outgoing particles
-            if (bkgReader.hepeup.ISTUP.at(iPart) == 1)
+            if (bkgReader.hepeup.ISTUP.at(iPart) != -1 && abs(bkgReader.hepeup.IDUP.at(iPart)) != 24)
             {
+                if (Verbose) std::cout << "particles PDG: " << bkgReader.hepeup.IDUP.at(iPart) << std::endl;
                 outgoingParticles_.push_back(bkgReader.hepeup.IDUP.at(iPart));
                 // PG leptons
                 if (abs(bkgReader.hepeup.IDUP.at(iPart)) == 11 || // PG electron
@@ -282,6 +287,10 @@ int main(int argc, char **argv)
                 {
                     leptons.push_back(iPart);
                 } // PG leptons
+                else if (abs(bkgReader.hepeup.IDUP.at(iPart)) == 21)
+                {
+                    finalGluons.push_back(iPart);
+                }
                 else
                 {
                     finalQuarks.push_back(iPart);
@@ -291,6 +300,7 @@ int main(int argc, char **argv)
             // PG intermediates
             if (bkgReader.hepeup.ISTUP.at(iPart) == 2)
             {
+                if (Verbose) std::cout << "particles PDG (intermediate): " << bkgReader.hepeup.IDUP.at(iPart) << std::endl;
                 intermediateParticles_.push_back(bkgReader.hepeup.IDUP.at(iPart));
                 intermediates.push_back(iPart);
             }
@@ -315,8 +325,12 @@ int main(int argc, char **argv)
         int signalWCtr = 0;
         isMuMinus = 0;
 
-        // std::cout << "L309: leptons.size(): " << leptons.size() << std::endl;
-        // std::cout << "L309: finalQuarks.size(): " << finalQuarks.size() << std::endl;
+        if (Verbose) std::cout << "L326: leptons.size(): " << leptons.size() << std::endl;
+        if (Verbose) std::cout << "L327 finalQuarks.size(): " << finalQuarks.size() << std::endl;
+        // if (finalQuarks.size() > 2)
+            // std::cout << "Number of quarks in the final state: " << finalQuarks.size() << std::endl;
+        if (Verbose) std::cout << "L328 finalGluons.size(): " << finalGluons.size() << std::endl;
+        if (Verbose) std::cout << "L328 intermediateParticles_.size(): " << intermediateParticles_.size() << std::endl;
 
         if (leptons.size() == 2)
         {
@@ -553,7 +567,9 @@ int main(int argc, char **argv)
         // std::cout << "mWW = " << mWW << ", mWW_PDG = " << mWW_PDG  << "\n\n\n====="<< std::endl;
         mTWW = (float)p4_WW.Mt();
         mWLep = (float)p4_WLep.M();
+        WLep_pT = (float)p4_WLep.Pt();
         mWHad = (float)p4_WHad.M();
+        WHad_pT = (float)Wqq_UsingPDG.Pt();
         costheta1 = (float)a_costheta1;
         costheta2 = (float)a_costheta2;
         phi = (float)a_Phi;

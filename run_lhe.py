@@ -6,7 +6,19 @@ import glob
 import os
 import sys
 
-ifRunAllFiles = sys.argv[1]
+if sys.version_info[0] < 3:
+    print("This script requires Python 3. Please use Python 3 to run this script.")
+    sys.exit()
+
+# Decide over how many .lhe file we need to run
+if len(sys.argv) < 2:
+    print("No argument given, so it will take default number of files to run with. ")
+    nFilesToRun = 1
+elif sys.argv == "n":
+    # nFilesToRun = sum(1 for _ in os.scandir(InputFiles[files]) if _.is_file())
+    nFilesToRun = len(glob.glob(InputFiles[files]))
+else:
+    nFilesToRun = sys.argv[1]
 
 print("Compile the LHEanalyzer...")
 os.system('c++ -o LHEanalyzer `root-config --glibs --cflags` LHEanalyzer.cpp')
@@ -22,27 +34,19 @@ for files in InputFiles:
     print("*"*5,files)
     print("*"*5,InputFiles[files])
 
-    if str(ifRunAllFiles) == "n":
-        # nFilesToRun = sum(1 for _ in os.scandir(InputFiles[files]) if _.is_file())
-        nFilesToRun = len(glob.glob(InputFiles[files]))
-    # elif ifRunAllFiles == "":
-        # nFilesToRun = 1
-    else:
-        nFilesToRun = int(ifRunAllFiles)
-
-    print (nFilesToRun, ifRunAllFiles)
-
     # Remove all unwanted files
     os.system('rm -f cmsgrid_final_seed*.root')
 
     count = 1
-
+    print("Running on file : {}/{}\n".format(count,count))
     # hadd command to hadd root files. Below command the 'files' is the name of output file
     haddCommand = 'hadd -f  '+files.replace('_2','_'+str(nFilesToRun))
     for file in glob.glob(InputFiles[files],recursive=True):
-        if count > nFilesToRun: break
         print("="*51)
         print("Running on file : {}/{}\n".format(count,nFilesToRun))
+        if count > int(nFilesToRun):
+            print("As nFiles > {}, breaking the loop".format(nFilesToRun))
+            break
         outputFile = (file.split('/')[-1]).replace('.lhe','.root')
         haddCommand += ' '+outputFile
         command = './LHEanalyzer {inputFile} {outputFile}'.format(inputFile = file, outputFile=outputFile)
@@ -51,7 +55,7 @@ for files in InputFiles:
         count += 1
 
     print(haddCommand)
-    # os.system(haddCommand)
+    os.system(haddCommand)
 
-    # Delete each files after run
-    os.system('rm -f cmsgrid_final_seed*.root')
+# Delete each files after run
+os.system('rm -f cmsgrid_final_seed*.root')
