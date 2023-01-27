@@ -10,16 +10,6 @@ if sys.version_info[0] < 3:
     print("This script requires Python 3. Please use Python 3 to run this script.")
     sys.exit()
 
-# Decide over how many .lhe file we need to run
-if len(sys.argv) < 2:
-    print("No argument given, so it will take default number of files to run with. ")
-    nFilesToRun = 1
-elif sys.argv == "n":
-    # nFilesToRun = sum(1 for _ in os.scandir(InputFiles[files]) if _.is_file())
-    nFilesToRun = len(glob.glob(InputFiles[files]))
-else:
-    nFilesToRun = sys.argv[1]
-
 print("Compile the LHEanalyzer...")
 os.system('c++ -o LHEanalyzer `root-config --glibs --cflags` LHEanalyzer.cpp')
 print("compilation done...\n")
@@ -28,11 +18,22 @@ InputFiles = {
     'output_hadd_150to600_4f_NLO_FXFX_2.root':  '/eos/user/a/anmehta/WmWpToLmNujj_01j_aTGC_pTW-150toInf_mWV-150to600_4f_NLO_FXFX/*.lhe',
     'output_hadd_600to800_4f_NLO_FXFX_2.root': '/eos/user/a/anmehta/WmWpToLmNujj_01j_aTGC_pTW-150toInf_mWV-600to800_4f_NLO_FXFX/*.lhe',
     'output_hadd_800toInf_4f_NLO_FXFX_2.root': '/eos/user/a/anmehta/WmWpToLmNujj_01j_aTGC_pTW-150toInf_mWV-800toInf_4f_NLO_FXFX/*.lhe'
+    # 'output_hadd_600to800_4f_NLO_FXFX_NEW_2.root': '/eos/user/a/anmehta/gridpacks_cutchks/WWToLNujj_01j_aTGC_pTW-150toInf_mWV-600to800_4f_NLO_FXFX/*.lhe'
 }
 
 for files in InputFiles:
     print("*"*5,files)
     print("*"*5,InputFiles[files])
+
+    # Decide over how many .lhe file we need to run
+    if len(sys.argv) < 2:
+        print("No argument given, so it will take default number of files to run with. ")
+        nFilesToRun = 1
+    elif sys.argv[1] == "n":
+        # nFilesToRun = sum(1 for _ in os.scandir(InputFiles[files]) if _.is_file())
+        nFilesToRun = len(glob.glob(InputFiles[files]))
+    else:
+        nFilesToRun = sys.argv[1]
 
     # Remove all unwanted files
     os.system('rm -f cmsgrid_final_seed*.root')
