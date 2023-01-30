@@ -1,4 +1,10 @@
 LHEanalyzer
+__pycache__/
+output/
+*.cc
+*.jdl
+*.txt
 *.root
 *.pdf
 .__afs*
+run_script*.sh

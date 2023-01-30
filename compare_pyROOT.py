@@ -4,10 +4,14 @@ gROOT.SetBatch(True)
 from array import array
 import sys
 
+if sys.version_info[0] >= 3:
+    print("This script requires Python 2. Please use Python 2 to run this script.")
+    sys.exit()
+
 # Open the root files
-file1 = ROOT.TFile.Open("/afs/cern.ch/user/r/rasharma/work/aTGC/CMSSW_10_2_13/src/LHEAnalyzer/output_hadd_150to600_4f_NLO_FXFX_10.root", "read")
-file2 = ROOT.TFile.Open("/afs/cern.ch/user/r/rasharma/work/aTGC/CMSSW_10_2_13/src/LHEAnalyzer/output_hadd_600to800_4f_NLO_FXFX_10.root", "read")
-file3 = ROOT.TFile.Open("/afs/cern.ch/user/r/rasharma/work/aTGC/CMSSW_10_2_13/src/LHEAnalyzer/output_hadd_800toInf_4f_NLO_FXFX_10.root", "read")
+file1 = ROOT.TFile.Open("/afs/cern.ch/user/r/rasharma/work/aTGC/CMSSW_10_2_13/src/LHEAnalyzer/output_hadd_150to600_4f_NLO_FXFX_all.root", "read")
+file2 = ROOT.TFile.Open("/afs/cern.ch/user/r/rasharma/work/aTGC/CMSSW_10_2_13/src/LHEAnalyzer/output_hadd_600to800_4f_NLO_FXFX_all.root", "read")
+file3 = ROOT.TFile.Open("/afs/cern.ch/user/r/rasharma/work/aTGC/CMSSW_10_2_13/src/LHEAnalyzer/output_hadd_800toInf_4f_NLO_FXFX_all.root", "read")
 
 # Get the branches you want to plot
 tree1 = file1.Get("tree")
@@ -68,7 +72,7 @@ print(hist2.GetMaximum())
 print(hist3.GetMaximum())
 print(max(max(hist1.GetMaximum(), hist2.GetMaximum()),max(hist3.GetMaximum(), hist2.GetMaximum())))
 
-hist1.SetMaximum(max(max(hist1.GetMaximum(), hist2.GetMaximum()),max(hist3.GetMaximum(), hist2.GetMaximum()))*1.1)
+hist1.SetMaximum(max(max(hist1.GetMaximum(), hist2.GetMaximum()),max(hist3.GetMaximum(), hist2.GetMaximum()))*1.2)
 
 # Create a canvas
 c = ROOT.TCanvas("c", "c", 800, 600)

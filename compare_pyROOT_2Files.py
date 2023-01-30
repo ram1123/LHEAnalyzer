@@ -5,9 +5,10 @@ from array import array
 import sys
 
 # Open the root files
-file1 = ROOT.TFile.Open("/afs/cern.ch/user/r/rasharma/work/aTGC/CMSSW_10_2_13/src/LHEAnalyzer/output_hadd_600to800_4f_NLO_FXFX_10.root", "read")
-file2 = ROOT.TFile.Open("/afs/cern.ch/user/r/rasharma/work/aTGC/CMSSW_10_2_13/src/LHEAnalyzer/output_hadd_600to800_4f_NLO_FXFX_NEW_10.root", "read")
+file1 = ROOT.TFile.Open("/afs/cern.ch/user/r/rasharma/work/aTGC/CMSSW_10_2_13/src/LHEAnalyzer/output_hadd_800toInf_4f_NLO_FXFX_all_v2.root", "read")
+file2 = ROOT.TFile.Open("/afs/cern.ch/user/r/rasharma/work/aTGC/CMSSW_10_2_13/src/LHEAnalyzer/output_hadd_800toInf_4f_NLO_FXFX_all_v2.root", "read")
 
+FileAppend = "800_nqG2"
 # Get the branches you want to plot
 tree1 = file1.Get("tree")
 tree2 = file2.Get("tree")
@@ -21,8 +22,8 @@ dicts = {
     "WLep_pT": "p_{T}(W)"
 }
 if len(sys.argv) < 3:
-    InputVarToCompare = "mWW"
-    InputVarToCompare2 = "mWW_PDG"
+    InputVarToCompare = "WHad_pT"
+    InputVarToCompare2 = "WHad_pT"
     title = dicts[InputVarToCompare]
     title2 = dicts[InputVarToCompare2]
 else:
@@ -32,7 +33,7 @@ else:
     title2 = dicts[InputVarToCompare2]
 
 # Define the variable bin for the mWW histogram
-varBins = [0, 15, 30, 50, 60, 70, 80, 90, 100, 120, 140, 149, 170, 200, 225, 250, 275, 300, 350, 400, 450, 500, 550, 600, 625, 650, 675, 700, 725, 750, 775, 800]
+varBins = [0, 15, 30, 50, 60, 70, 80, 90, 100, 120, 150, 170, 200, 225, 250, 275, 300, 350, 400, 450, 500, 550, 600, 625, 650, 675, 700, 725, 750, 775, 800]
 # if InputVarToCompare == "mWW" or InputVarToCompare == "mWW_PDG":
 for i in range(850,2050,50):
         varBins.append(i)
@@ -46,8 +47,8 @@ hist1 = ROOT.TH1F("hist1", title + ";" + title + ";Entries", nbins, bin_edges)
 hist2 = ROOT.TH1F("hist2", title2 + ";" + title2 + ";Entries", nbins, bin_edges)
 
 # Fill the histograms with the branch values from the trees
-tree1.Draw(InputVarToCompare + ">>hist1")
-tree2.Draw(InputVarToCompare2 + ">>hist2")
+tree1.Draw(InputVarToCompare + ">>hist1","nQuarks==2")
+tree2.Draw(InputVarToCompare2 + ">>hist2","nQuarks>2")
 
 # hist1.Scale(1./hist1.Integral())
 # hist2.Scale(1./hist2.Integral())
@@ -74,8 +75,8 @@ hist2.SetLineColor(ROOT.kRed)
 
 # Add a legend
 legend = ROOT.TLegend(0.7, 0.7, 0.9, 0.9)
-legend.AddEntry(hist1, "OLD", "l")
-legend.AddEntry(hist2, "NEW", "l")
+legend.AddEntry(hist1, "nQuarks==2", "l")
+legend.AddEntry(hist2, "nQuarks>2", "l")
 legend.Draw()
 
 # Create a line object
@@ -98,4 +99,4 @@ else:
 c.SetLogy(1)
 c.Update()
 # c.SaveAs("compare_mWW_mWWPDG_old.pdf")
-c.SaveAs("compare_branchesSameTree_"+InputVarToCompare+"_"+InputVarToCompare2+"_OLD.pdf")
+c.SaveAs("compare_branchesSameTree_"+InputVarToCompare+"_"+InputVarToCompare2+"_"+FileAppend+".pdf")

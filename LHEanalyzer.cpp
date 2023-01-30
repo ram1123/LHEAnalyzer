@@ -104,7 +104,7 @@ int main(int argc, char **argv)
     float costhetaV1, costhetaV2;
     float costhetaV3, costhetaV4;
     float dEtajj, dPhijj, mjj;
-    int isSignal, isMuMinus;
+    int isSignal, isMuMinus, nQuarks;
     float Lep0_px, Lep0_py, Lep0_pz, Lep0_pt, Lep0_eta, Lep0_theta, Lep0_phi, Lep0_E;
     float Lep1_px, Lep1_py, Lep1_pz, Lep1_pt, Lep1_eta, Lep1_theta, Lep1_phi, Lep1_E;
     float Wqrk0_px, Wqrk0_py, Wqrk0_pz, Wqrk0_pt, Wqrk0_eta, Wqrk0_theta, Wqrk0_phi, Wqrk0_E;
@@ -183,6 +183,7 @@ int main(int argc, char **argv)
 
     tree->Branch("isSignal", &isSignal, "isSignal/I");
     tree->Branch("isMuMinus", &isMuMinus, "isMuMinus/I");
+    tree->Branch("nQuarks", &nQuarks, "nQuarks/I");
 
     // PG loop over bkg
     // PG -------------
@@ -332,6 +333,7 @@ int main(int argc, char **argv)
         if (Verbose) std::cout << "L328 finalGluons.size(): " << finalGluons.size() << std::endl;
         if (Verbose) std::cout << "L328 intermediateParticles_.size(): " << intermediateParticles_.size() << std::endl;
 
+        // finalQuarks.size() add branch
         if (leptons.size() == 2)
         {
             if (bkgReader.hepeup.IDUP.at(leptons.at(0)) > 0)
@@ -577,6 +579,8 @@ int main(int argc, char **argv)
         phi1 = (float)a_Phi1;
 
         isSignal = signalFlag;
+        nQuarks = finalQuarks.size();
+        // std::cout << "L327 finalQuarks.size(): " << finalQuarks.size() << std::endl;
 
         tree->Fill();
         initialQuarks_.clear();
