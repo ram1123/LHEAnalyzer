@@ -570,7 +570,7 @@ int main(int argc, char **argv)
         mTWW = (float)p4_WW.Mt();
         mWLep = (float)p4_WLep.M();
         WLep_pT = (float)p4_WLep.Pt();
-        mWHad = (float)p4_WHad.M();
+        mWHad = (float)Wqq_UsingPDG.M();
         WHad_pT = (float)Wqq_UsingPDG.Pt();
         costheta1 = (float)a_costheta1;
         costheta2 = (float)a_costheta2;
