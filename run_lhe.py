@@ -18,13 +18,42 @@ print("compilation done...\n")
 OUTPUTPATH = "/eos/user/r/rasharma/post_doc_ihep/aTGC/LHEAnalyzer"
 ifCondor = True
 InputFiles = {
-    'output_hadd_150to600_4f_NLO_FXFX':  '/eos/user/a/anmehta/WmWpToLmNujj_01j_aTGC_pTW-150toInf_mWV-150to600_4f_NLO_FXFX/*.lhe',
-    'output_hadd_600to800_4f_NLO_FXFX': '/eos/user/a/anmehta/WmWpToLmNujj_01j_aTGC_pTW-150toInf_mWV-600to800_4f_NLO_FXFX/*.lhe',
-    'output_hadd_800toInf_4f_NLO_FXFX': '/eos/user/a/anmehta/WmWpToLmNujj_01j_aTGC_pTW-150toInf_mWV-800toInf_4f_NLO_FXFX/*.lhe',
-    'output_hadd_600to800_4f_NLO_FXFX_NEW': '/eos/user/a/anmehta/gridpacks_cutchks/WWToLNujj_01j_aTGC_pTW-150toInf_mWV-600to800_4f_NLO_FXFX/*.lhe'
+    # 'output_SM_WZToLNuQQ_5f': '/eos/user/a/anmehta/WZToLNuQQ_5f_amcatnloFxFx/*.lhe',
+    # 'output_SM_WWToLNuQQ_4f': '/eos/user/a/anmehta/WWToLNuQQ_4f_amcatnloFxFx/*.lhe'
+    # 'output_hadd_150to600_4f_NLO_FXFX':  '/eos/user/a/anmehta/WmWpToLmNujj_01j_aTGC_pTW-150toInf_mWV-150to600_4f_NLO_FXFX/*.lhe',
+    # 'output_hadd_600to800_4f_NLO_FXFX': '/eos/user/a/anmehta/WmWpToLmNujj_01j_aTGC_pTW-150toInf_mWV-600to800_4f_NLO_FXFX/*.lhe',
+    # 'output_hadd_800toInf_4f_NLO_FXFX': '/eos/user/a/anmehta/WmWpToLmNujj_01j_aTGC_pTW-150toInf_mWV-800toInf_4f_NLO_FXFX/*.lhe',
+
+        'output_hadd_WpWmToLpNujj_mWV-150to600': '/eos/user/a/anmehta/WpWmToLpNujj_01j_aTGC_pTW-150toInf_mWV-150to600_4f_NLO_FXFX/*.lhe',
+        'output_hadd_WpWmToLpNujj_mWV-600to800': '/eos/user/a/anmehta/WpWmToLpNujj_01j_aTGC_pTW-150toInf_mWV-600to800_4f_NLO_FXFX/*.lhe',
+        'output_hadd_WpWmToLpNujj_mWV-800toInf': '/eos/user/a/anmehta/WpWmToLpNujj_01j_aTGC_pTW-150toInf_mWV-800toInf_4f_NLO_FXFX/*.lhe',
+
+
+    # 'output_hadd_600to800_4f_NLO_FXFX_NEW': '/eos/user/a/anmehta/gridpacks_cutchks/WWToLNujj_01j_aTGC_pTW-150toInf_mWV-600to800_4f_NLO_FXFX/*.lhe',
+    # # }
+
+    # # InputFiles = {
+    # 'Out_WmZToLmNujj_01j_aTGC_pTW-150toInf_mWV-600to800': '/eos/user/a/anmehta/gridpacks_WZbatch/WmZToLmNujj_01j_aTGC_pTW-150toInf_mWV-600to800_4f_NLO_FXFX/*.lhe',
+    # 'Out_WmZToLmNujj_01j_aTGC_pTW-150toInf_mWV-150to600': '/eos/user/a/anmehta/gridpacks_WZbatch/WmZToLmNujj_01j_aTGC_pTW-150toInf_mWV-150to600_4f_NLO_FXFX/*.lhe',
+    # 'Out_WmZToLmNujj_01j_aTGC_pTZ-150toInf_mWV-150to600': '/eos/user/a/anmehta/gridpacks_WZbatch/WmZToLmNujj_01j_aTGC_pTZ-150toInf_mWV-150to600_4f_NLO_FXFX/*.lhe',
+    # 'Out_WpZToLpNujj_01j_aTGC_pTZ-150toInf_mWV-150to600': '/eos/user/a/anmehta/gridpacks_WZbatch/WpZToLpNujj_01j_aTGC_pTZ-150toInf_mWV-150to600_4f_NLO_FXFX/*.lhe',
+    # 'Out_WpZToLpNujj_01j_aTGC_pTW-150toInf_mWV-800toInf': '/eos/user/a/anmehta/gridpacks_WZbatch/WpZToLpNujj_01j_aTGC_pTW-150toInf_mWV-800toInf_4f_NLO_FXFX/*.lhe',
+    # 'Out_WpZToLpNujj_01j_aTGC_pTW-150toInf_mWV-150to600': '/eos/user/a/anmehta/gridpacks_WZbatch/WpZToLpNujj_01j_aTGC_pTW-150toInf_mWV-150to600_4f_NLO_FXFX/*.lhe',
+    # 'Out_WmZToLmNujj_01j_aTGC_pTZ-150toInf_mWV-600to800': '/eos/user/a/anmehta/gridpacks_WZbatch/WmZToLmNujj_01j_aTGC_pTZ-150toInf_mWV-600to800_4f_NLO_FXFX/*.lhe',
+    # 'Out_WpZToLpNujj_01j_aTGC_pTZ-150toInf_mWV-600to800': '/eos/user/a/anmehta/gridpacks_WZbatch/WpZToLpNujj_01j_aTGC_pTZ-150toInf_mWV-600to800_4f_NLO_FXFX/*.lhe',
+    # 'Out_WmZToLmNujj_01j_aTGC_pTW-150toInf_mWV-800toInf': '/eos/user/a/anmehta/gridpacks_WZbatch/WmZToLmNujj_01j_aTGC_pTW-150toInf_mWV-800toInf_4f_NLO_FXFX/*.lhe',
+    # 'Out_ZWmTo2ljj_01j_aTGC_pTW-150toInf_mWV-150to600': '/eos/user/a/anmehta/gridpacks_WZbatch/ZWmTo2ljj_01j_aTGC_pTW-150toInf_mWV-150to600_4f_NLO_FXFX/*.lhe',
+    # 'Out_WpZToLpNujj_01j_aTGC_pTZ-150toInf_mWV-800toInf': '/eos/user/a/anmehta/gridpacks_WZbatch/WpZToLpNujj_01j_aTGC_pTZ-150toInf_mWV-800toInf_4f_NLO_FXFX/*.lhe',
+    # 'Out_WpZToLpNujj_01j_aTGC_pTW-150toInf_mWV-600to800': '/eos/user/a/anmehta/gridpacks_WZbatch/WpZToLpNujj_01j_aTGC_pTW-150toInf_mWV-600to800_4f_NLO_FXFX/*.lhe',
+    # 'Out_WmZToLmNujj_01j_aTGC_pTZ-150toInf_mWV-800toInf': '/eos/user/a/anmehta/gridpacks_WZbatch/WmZToLmNujj_01j_aTGC_pTZ-150toInf_mWV-800toInf_4f_NLO_FXFX/*.lhe',
+    # 'Out_ZWmTo2ljj_01j_aTGC_pTW-150toInf_mWV-600to800': '/eos/user/a/anmehta/gridpacks_WZbatch/ZWmTo2ljj_01j_aTGC_pTW-150toInf_mWV-600to800_4f_NLO_FXFX/*.lhe',
+    # 'Out_ZWpTo2ljj_01j_aTGC_pTW-150toInf_mWV-150to600': '/eos/user/a/anmehta/gridpacks_WZbatch/ZWpTo2ljj_01j_aTGC_pTW-150toInf_mWV-150to600_4f_NLO_FXFX/*.lhe',
+    # 'Out_ZWmTo2ljj_01j_aTGC_pTW-150toInf_mWV-800toInf': '/eos/user/a/anmehta/gridpacks_WZbatch/ZWmTo2ljj_01j_aTGC_pTW-150toInf_mWV-800toInf_4f_NLO_FXFX/*.lhe',
+    # 'Out_ZWpTo2ljj_01j_aTGC_pTW-150toInf_mWV-600to800': '/eos/user/a/anmehta/gridpacks_WZbatch/ZWpTo2ljj_01j_aTGC_pTW-150toInf_mWV-600to800_4f_NLO_FXFX/*.lhe',
+    # 'Out_ZWpTo2ljj_01j_aTGC_pTW-150toInf_mWV-800toInf': '/eos/user/a/anmehta/gridpacks_WZbatch/ZWpTo2ljj_01j_aTGC_pTW-150toInf_mWV-800toInf_4f_NLO_FXFX/*.lhe'
 }
 
-year = "final_v2"
+year = "final_AllWithReweight"
 
 make_directory('output/{}'.format(year))
 with open("condor_job_{}.jdl".format(year), "w") as cnd_out:
@@ -54,6 +83,7 @@ for files in InputFiles:
     else:
         nFilesToRun = len(glob.glob(InputFiles[files]))
 
+    # nFilesToRun = len(glob.glob(InputFiles[files]))
     # Remove all unwanted files
     # os.system('rm -f cmsgrid_final_seed*.root')
 
@@ -65,9 +95,9 @@ for files in InputFiles:
     for file in glob.glob(InputFiles[files],recursive=True):
         print("="*51)
         print("Running on file : {}/{}\n".format(count,nFilesToRun))
-        if count > int(nFilesToRun):
-            print("As nFiles > {}, breaking the loop".format(nFilesToRun))
-            break
+        # if count > int(nFilesToRun):
+        #     print("As nFiles > {}, breaking the loop".format(nFilesToRun))
+        #     break
         outputFile = (file.split('/')[-1]).replace('.lhe','.root')
         if not ifCondor: haddCommand += ' '+outputFile
         command = './LHEanalyzer {inputFile} {outputFile}'.format(inputFile = file, outputFile=outputFile)

@@ -105,6 +105,7 @@ int main(int argc, char **argv)
     float costhetaV3, costhetaV4;
     float dEtajj, dPhijj, mjj;
     int isSignal, isMuMinus, nQuarks;
+    float SM_Weight;
     float Lep0_px, Lep0_py, Lep0_pz, Lep0_pt, Lep0_eta, Lep0_theta, Lep0_phi, Lep0_E;
     float Lep1_px, Lep1_py, Lep1_pz, Lep1_pt, Lep1_eta, Lep1_theta, Lep1_phi, Lep1_E;
     float Wqrk0_px, Wqrk0_py, Wqrk0_pz, Wqrk0_pt, Wqrk0_eta, Wqrk0_theta, Wqrk0_phi, Wqrk0_E;
@@ -184,6 +185,7 @@ int main(int argc, char **argv)
     tree->Branch("isSignal", &isSignal, "isSignal/I");
     tree->Branch("isMuMinus", &isMuMinus, "isMuMinus/I");
     tree->Branch("nQuarks", &nQuarks, "nQuarks/I");
+    tree->Branch("SM_Weight", &SM_Weight, "SM_Weight/F");
 
     // PG loop over bkg
     // PG -------------
@@ -194,7 +196,7 @@ int main(int argc, char **argv)
     int count = 0;
     int NSignal = 0;
     int NTotal = 0;
-    double SM_Weight = 0.0;
+    // double SM_Weight = 0.0;
 
     std::ifstream ifsbkg(argv[1]);
     // Create the Reader object
@@ -215,22 +217,23 @@ int main(int argc, char **argv)
         ++BKGnumber;
         if (BKGnumber % 1000 == 0)
             std::cout << "====> BKG event " << BKGnumber << "\n";
-        // if (BKGnumber > 10) break;
-        /*
-            std::cout<< "Number of particles = "<<bkgReader.hepeup.NUP<<std::endl;
-            std::cout<< "Event weight = "<<bkgReader.hepeup.XWGTUP<<std::endl;
-            std::cout<<"rwgt size = "<<bkgReader.hepeup.namedweights.size()<<std::endl;
-            std::cout<<"rwgt size = "<<bkgReader.hepeup.weights.size()<<std::endl;
-        */
-        // for (int iPart = 0; iPart < bkgReader.hepeup.namedweights.size(); ++iPart)
-        // {
-        //     if (bkgReader.hepeup.namedweights[iPart].name == "fs0_0p0")
-        //     {
-        //         // std::cout<<iPart+1<<"\tWeight info : "<<std::scientific<<bkgReader.hepeup.namedweights[iPart].weights[0]<<"\t"<< bkgReader.hepeup.namedweights[iPart].name <<std::endl;
-        //         // std::cout<<iPart+1<<"\tWeight info : "<<std::setprecision(10)<<bkgReader.hepeup.namedweights[iPart].weights[0]<<"\t"<< bkgReader.hepeup.namedweights[iPart].name <<std::endl;
-        //         SM_Weight = bkgReader.hepeup.namedweights[iPart].weights[0];
-        //     }
-        // }
+        // std::cout << "====> BKG event " << BKGnumber << "\n";
+        // if (BKGnumber > 1) break;
+
+        // std::cout<< "Number of particles = "<<bkgReader.hepeup.NUP<<std::endl;
+        // std::cout<< "Event weight = "<<bkgReader.hepeup.XWGTUP<<std::endl;
+        // std::cout<<"rwgt size = "<<bkgReader.hepeup.namedweights.size()<<std::endl;
+        // std::cout<<"rwgt size = "<<bkgReader.hepeup.weights.size()<<std::endl;
+
+        for (int iPart = 0; iPart < bkgReader.hepeup.namedweights.size(); ++iPart)
+        {
+            if (bkgReader.hepeup.namedweights[iPart].name == "cwww0p0_cw0p00_cb0")  // Save only SM weight. Just to reduce computing and storage uses.
+            {
+                // std::cout<<iPart+1<<"\tWeight info : "<<std::scientific<<bkgReader.hepeup.namedweights[iPart].weights[0]<<"\t"<< bkgReader.hepeup.namedweights[iPart].name <<std::endl;
+                // std::cout<<iPart+1<<"\tWeight info : "<<std::setprecision(10)<<bkgReader.hepeup.namedweights[iPart].weights[0]<<"\t"<< bkgReader.hepeup.namedweights[iPart].name <<std::endl;
+                SM_Weight = bkgReader.hepeup.namedweights[iPart].weights[0];
+            }
+        }
 
         std::vector<int> leptons;
         std::vector<int> finalQuarks;
