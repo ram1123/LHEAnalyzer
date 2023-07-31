@@ -38,7 +38,7 @@ int COUNTER = 0;
 
 bool Verbose = false;
 bool DEBUG = false;
-const int EVENTSTORUN = -1;
+const int EVENTSTORUN = 11;
 
 int counter_forwardQuarks = 0;
 
@@ -51,6 +51,19 @@ struct Kinematics
     double energy;
     double mass;
     int pdgID;
+
+    // default constructor
+    Kinematics() : pt(0.0), eta(0.0), phi(0.0), energy(0.0), mass(0.0), pdgID(0) {}
+
+    void reset()
+    {
+        pt = 0.0;
+        eta = 0.0;
+        phi = 0.0;
+        energy = 0.0;
+        mass = 0.0;
+        pdgID = 0;
+    }
 };
 
 Kinematics leadingLeptonFromZ, subleadingLeptonFromZ, leptonFromW, neutrinoFromW, leadingQuarkFromW, subleadingQuarkFromW, wBosonKinematics, bQuarkFromTopKinematics, forwardQuarkKinematics;
@@ -122,6 +135,8 @@ void handleParticle(int iPart, LHEF::Reader &bkgReader)
                 if (Verbose)
                     std::cout << "outgoing LEPZ PDGID: " << particlePDG << std::endl;
                 PDG_OutgoingParticles_LEPZ->push_back(particlePDG);
+
+                if (Verbose) std::cout << "leadingLeptonFromZ.pt: " << leadingLeptonFromZ.pt << "\t" << particleMomentum.Pt() << std::endl;
                 if (leadingLeptonFromZ.pt < particleMomentum.Pt())
                 {
                     subleadingLeptonFromZ = leadingLeptonFromZ;
@@ -131,6 +146,8 @@ void handleParticle(int iPart, LHEF::Reader &bkgReader)
                 {
                     subleadingLeptonFromZ = convertToKinematics(particleMomentum, particlePDG);
                 }
+                if (Verbose) std::cout << "L142# leading lepton from Z: pT: " << leadingLeptonFromZ.pt << "\t" << leadingLeptonFromZ.pdgID << std::endl;
+                if (Verbose) std::cout << "L142# sub-leading lepton from Z: pT: " << subleadingLeptonFromZ.pt << "\t" << subleadingLeptonFromZ.pdgID << std::endl;
             }
 
             // Storing kinematics of lepton and neutrino from W boson
@@ -269,6 +286,17 @@ int main(int argc, char **argv)
         PDG_OutgoingParticles_QuarkTop->clear();
         PDG_OutgoingParticles_QuarkW->clear();
 
+        // Reset kinematic values before processing the event
+        leadingLeptonFromZ.reset();
+        subleadingLeptonFromZ.reset();
+        leptonFromW.reset();
+        neutrinoFromW.reset();
+        leadingQuarkFromW.reset();
+        subleadingQuarkFromW.reset();
+        wBosonKinematics.reset();
+        bQuarkFromTopKinematics.reset();
+        forwardQuarkKinematics.reset();
+
         if (nEvents > EVENTSTORUN && DEBUG)
             break;
 
@@ -282,6 +310,10 @@ int main(int argc, char **argv)
         {
             handleParticle(iPart, bkgReader);
         }
+
+        if (Verbose) std::cout << "leading lepton from Z: pT: " << leadingLeptonFromZ.pt << "\t" << leadingLeptonFromZ.pdgID <<  std::endl;
+        if (Verbose) std::cout << "sub-leading lepton from Z: pT: " << subleadingLeptonFromZ.pt << "\t" << subleadingLeptonFromZ.pdgID <<  std::endl;
+
         // std::cout << " " << std::endl;
         // std::cout << "Incoming particles: \t" << PDG_IncomingParticles->size() << std::endl;
         // std::cout << "Intermediate particles\t" << PDG_IntermediateParticles->size() << std::endl;
