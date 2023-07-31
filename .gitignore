@@ -9,3 +9,4 @@ output/
 .__afs*
 run_script*.sh
 *.png
+*.lhe

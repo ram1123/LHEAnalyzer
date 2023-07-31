@@ -38,7 +38,7 @@ int COUNTER = 0;
 
 bool Verbose = false;
 bool DEBUG = false;
-const int EVENTSTORUN = 11;
+const int EVENTSTORUN = 5;
 
 int counter_forwardQuarks = 0;
 
@@ -99,11 +99,29 @@ void handleParticle(int iPart, LHEF::Reader &bkgReader)
     int particlePDG = bkgReader.hepeup.IDUP.at(iPart);
     int status = bkgReader.hepeup.ISTUP.at(iPart);
 
-    int mother1 = bkgReader.hepeup.MOTHUP.at(iPart).first - 1;  // Adjusting to 0-indexed
-    int mother2 = bkgReader.hepeup.MOTHUP.at(iPart).second - 1; // Adjusting to 0-indexed
+    int mother1Index = bkgReader.hepeup.MOTHUP.at(iPart).first - 1;  // Adjusting to 0-indexed
+    int mother2Index = bkgReader.hepeup.MOTHUP.at(iPart).second - 1; // Adjusting to 0-indexed
+
+    int grandmother1IndexForMother1 = bkgReader.hepeup.MOTHUP[mother1Index].first-1;
+    int grandmother2IndexForMother1 = bkgReader.hepeup.MOTHUP[mother1Index].second-1;
+
+    int grandmother1IndexForMother2 = bkgReader.hepeup.MOTHUP[mother2Index].first-1;
+    int grandmother2IndexForMother2 = bkgReader.hepeup.MOTHUP[mother2Index].second-1;
+
+    // if (particlePDG 4= 6 ) {
+    //     std::cout << "pdgID: " << particlePDG << "\n"
+    //             << "Mother: " << bkgReader.hepeup.IDUP.at(mother1Index) << ", " << bkgReader.hepeup.IDUP.at(mother2Index) << "\n"
+    //             << "GM1 (Mother 1): " << bkgReader.hepeup.IDUP.at(grandmother1IndexForMother1) << "\n"
+    //             << "GM2 (Mother 1): " << bkgReader.hepeup.IDUP.at(grandmother2IndexForMother1) << "\n"
+    //             << "GM1 (Mother 2): " << bkgReader.hepeup.IDUP.at(grandmother1IndexForMother2) << "\n"
+    //             << "GM2 (Mother 2): " << bkgReader.hepeup.IDUP.at(grandmother2IndexForMother2) << std::endl;
+    // }
 
     if (Verbose && status > 0)
-        std::cout << "particle PDGID " << particlePDG << "\t status: " << status << "\t mother: " << bkgReader.hepeup.IDUP.at(mother1) << ", " << bkgReader.hepeup.IDUP.at(mother2) << std::endl;
+    // if (status > 0)
+        std::cout << "particle PDGID " << particlePDG << "\t status: " << status << "\t mother: " << bkgReader.hepeup.IDUP.at(mother1Index) << ", " << bkgReader.hepeup.IDUP.at(mother2Index) << std::endl;
+    else if (Verbose)
+        std::cout << "particle PDGID " << particlePDG << "\t status: " << status << std::endl;
 
     double px = bkgReader.hepeup.PUP.at(iPart)[0];
     double py = bkgReader.hepeup.PUP.at(iPart)[1];
@@ -130,7 +148,7 @@ void handleParticle(int iPart, LHEF::Reader &bkgReader)
         {
             if (Verbose)
                 std::cout << "outgoing LEP PDGID: " << particlePDG << std::endl;
-            if (bkgReader.hepeup.IDUP.at(mother1) == PDG_Z_BOSON || bkgReader.hepeup.IDUP.at(mother2) == PDG_Z_BOSON)
+            if (bkgReader.hepeup.IDUP.at(mother1Index) == PDG_Z_BOSON || bkgReader.hepeup.IDUP.at(mother2Index) == PDG_Z_BOSON)
             {
                 if (Verbose)
                     std::cout << "outgoing LEPZ PDGID: " << particlePDG << std::endl;
@@ -152,10 +170,10 @@ void handleParticle(int iPart, LHEF::Reader &bkgReader)
 
             // Storing kinematics of lepton and neutrino from W boson
             // if (abs(particlePDG) >= 11 && abs(particlePDG) <= 16)
-            // if (bkgReader.hepeup.IDUP.at(mother1) == PDG_Z_BOSON || bkgReader.hepeup.IDUP.at(mother2) == PDG_Z_BOSON)
+            // if (bkgReader.hepeup.IDUP.at(mother1Index) == PDG_Z_BOSON || bkgReader.hepeup.IDUP.at(mother2Index) == PDG_Z_BOSON)
             if (Verbose)
-                std::cout << "bkgReader.hepeup.IDUP.at(mother1): " << bkgReader.hepeup.IDUP.at(mother1) << "\t" << PDG_W_BOSON << std::endl;
-            if (abs(bkgReader.hepeup.IDUP.at(mother1)) == PDG_W_BOSON || abs(bkgReader.hepeup.IDUP.at(mother2))== PDG_W_BOSON)
+                std::cout << "bkgReader.hepeup.IDUP.at(mother1Index): " << bkgReader.hepeup.IDUP.at(mother1Index) << "\t" << PDG_W_BOSON << std::endl;
+            if (abs(bkgReader.hepeup.IDUP.at(mother1Index)) == PDG_W_BOSON || abs(bkgReader.hepeup.IDUP.at(mother2Index))== PDG_W_BOSON)
             {
                 if (Verbose)
                     std::cout << "outgoing LEPW PDGID: " << particlePDG << std::endl;
@@ -173,10 +191,8 @@ void handleParticle(int iPart, LHEF::Reader &bkgReader)
         }
 
         // Storing kinematics of quarks from W boson that decays from top
-        if (abs(particlePDG) <= 6)
+        if ((abs(bkgReader.hepeup.IDUP.at(mother1Index)) == PDG_W_BOSON || abs(bkgReader.hepeup.IDUP.at(mother2Index)) == PDG_W_BOSON) && abs(particlePDG) <= 6)
         {
-            if (bkgReader.hepeup.IDUP.at(mother1) == PDG_W_BOSON || bkgReader.hepeup.IDUP.at(mother2) == PDG_W_BOSON)
-            {
                 PDG_OutgoingParticles_QuarkW->push_back(particlePDG);
                 if (leadingQuarkFromW.pt < particleMomentum.Pt())
                 {
@@ -189,28 +205,23 @@ void handleParticle(int iPart, LHEF::Reader &bkgReader)
                 }
             }
 
-            // Storing kinematics of the W-boson and the b-quark from top
-            if (bkgReader.hepeup.IDUP.at(mother1) == PDG_TOP || bkgReader.hepeup.IDUP.at(mother2) == PDG_TOP)
+            // Storing kinematics of the b-quark from top
+            if ((abs(bkgReader.hepeup.IDUP.at(mother1Index)) == PDG_TOP || abs(bkgReader.hepeup.IDUP.at(mother2Index)) == PDG_TOP))
             {
-                if (abs(particlePDG) == PDG_W_BOSON)
-                {
-                    wBosonKinematics = convertToKinematics(particleMomentum, particlePDG);
-                }
-                else if (abs(particlePDG) == PDG_B_QUARK || abs(particlePDG) == PDG_ANTI_B_QUARK)
+                if (abs(particlePDG) == PDG_B_QUARK || abs(particlePDG) == PDG_ANTI_B_QUARK)
                 {
                     bQuarkFromTopKinematics = convertToKinematics(particleMomentum, particlePDG);
                     PDG_OutgoingParticles_QuarkTop->push_back(particlePDG);
                 }
             }
-        }
 
         // Storing kinematics of other forward quark
         if (abs(particlePDG) <= 6 && particleMomentum.Pz() > 0)
         {
 
-            if (abs(bkgReader.hepeup.IDUP.at(mother1)) != PDG_W_BOSON && abs(bkgReader.hepeup.IDUP.at(mother2)) != PDG_W_BOSON &&
-                abs(bkgReader.hepeup.IDUP.at(mother1)) != PDG_Z_BOSON && abs(bkgReader.hepeup.IDUP.at(mother2)) != PDG_Z_BOSON &&
-                abs(bkgReader.hepeup.IDUP.at(mother1)) != PDG_TOP && abs(bkgReader.hepeup.IDUP.at(mother2)) != PDG_TOP)
+            if (abs(bkgReader.hepeup.IDUP.at(mother1Index)) != PDG_W_BOSON && abs(bkgReader.hepeup.IDUP.at(mother2Index)) != PDG_W_BOSON &&
+                abs(bkgReader.hepeup.IDUP.at(mother1Index)) != PDG_Z_BOSON && abs(bkgReader.hepeup.IDUP.at(mother2Index)) != PDG_Z_BOSON &&
+                abs(bkgReader.hepeup.IDUP.at(mother1Index)) != PDG_TOP && abs(bkgReader.hepeup.IDUP.at(mother2Index)) != PDG_TOP)
             {
                 PDG_OutgoingParticles_OtherQuark->push_back(particlePDG);
                 // if (forwardQuarkKinematics.pt < particleMomentum.Pt())
@@ -222,8 +233,8 @@ void handleParticle(int iPart, LHEF::Reader &bkgReader)
                 if (PDG_ForwardQuarks->size() > 1)
                 {
                     std::cout << "number of forward quarks = " << PDG_ForwardQuarks->size() << std::endl;
-                    std::cout << "number of forward quarks mother1 = " << mother1 << "\t" << bkgReader.hepeup.IDUP.at(mother1) << std::endl;
-                    std::cout << "number of forward quarks mother2= " << mother2 << "\t" << bkgReader.hepeup.IDUP.at(mother2) << "\n\n"
+                    std::cout << "number of forward quarks mother1Index = " << mother1Index << "\t" << bkgReader.hepeup.IDUP.at(mother1Index) << std::endl;
+                    std::cout << "number of forward quarks mother2Index= " << mother2Index << "\t" << bkgReader.hepeup.IDUP.at(mother2Index) << "\n\n"
                               << std::endl;
                     COUNTER++;
                     throw std::runtime_error("More than one forward quark detected");
@@ -236,6 +247,15 @@ void handleParticle(int iPart, LHEF::Reader &bkgReader)
     if (status == STATUS_INTERMEDIATE)
     {
         PDG_IntermediateParticles->push_back(particlePDG);
+
+        if ((abs(bkgReader.hepeup.IDUP.at(mother1Index)) == PDG_TOP || abs(bkgReader.hepeup.IDUP.at(mother2Index)) == PDG_TOP))
+        {
+            if (abs(particlePDG) == PDG_W_BOSON)
+            {
+                wBosonKinematics = convertToKinematics(particleMomentum, particlePDG);
+            }
+        }
+
     }
 }
 
@@ -300,7 +320,7 @@ int main(int argc, char **argv)
         if (nEvents > EVENTSTORUN && DEBUG)
             break;
 
-        if (Verbose)
+        if (DEBUG)
             std::cout << "\n\n====> BKG event " << nEvents << "\n";
 
         // Loop over particles in the event
