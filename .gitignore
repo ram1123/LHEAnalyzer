@@ -8,3 +8,4 @@ output/
 *.pdf
 .__afs*
 run_script*.sh
+*.png
