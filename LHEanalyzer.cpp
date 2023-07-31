@@ -1,22 +1,3 @@
-/*
- * =====================================================================================
- *
- *       Filename:  LHEanalyzer.cpp
- *
- *    Description:  This macro reades the lhe file and convert it into root file.
- *
- *        Version:  1.0
- *        Created:  Friday 02 January 2015 04:45:09  IST
- *       Revision:  none
- *       Compiler:  gcc
- *
- *         Author:  Nhan Viet Tran
- *	Edited By:  Ramkrishna Sharma
- *   Organization:  CERN
- *
- * =====================================================================================
- */
-
 #include "LHEF.h"
 #include "TROOT.h"
 #include "TFile.h"
