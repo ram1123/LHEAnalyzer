@@ -40,7 +40,7 @@ def process_files(input_dict, year, condor=True):
         print(f"Running on files: 1/{n_files_to_run}\n")
 
         if not condor:
-            hadd_command = f'hadd -f {file_key}_{n_files_to_run}.root'
+            hadd_command = f'hadd -f {output_path}/{file_key}_{n_files_to_run}.root'
 
         local_dir = os.getcwd()
         print(f'PWD: {local_dir}')
@@ -51,14 +51,20 @@ def process_files(input_dict, year, condor=True):
 
             output_file = file.split('/')[-1].replace('.lhe', '.root')
             if not condor:
-                hadd_command += f' {output_file}'
-            command = f'./LHEanalyzer {file} {output_file}'
+                hadd_command += f'{output_path}/{output_file}'
+            command = f'./LHEanalyzer {file} {output_path}/{output_file}'
 
-            with open(f"arguments_{year}.txt", "a") as in_arg_file:
-                in_arg_file.write(f"{file}  {local_dir}  {output_path}  {output_file}\n")
+            # Execute the command
+            if not condor:
+                os.system(command)
+
+            if condor:
+                with open(f"arguments_{year}.txt", "a") as in_arg_file:
+                    in_arg_file.write(f"{file}  {local_dir}  {output_path}  {output_file}\n")
 
         if not condor:
             print(hadd_command)
+            os.system(hadd_command)
 
 
 def main():

@@ -1,5 +1,15 @@
+"""
+Help:
+This script will run using python3.
+Run using: python3 Plotter.py
+"""
+
 import ROOT
-import os
+import sys
+
+if sys.version_info[0] < 3:
+    print("This script requires Python 3. Please use Python 3 to run this script.")
+    sys.exit()
 
 def plot_and_save(tree, branch_name, variables):
     c = ROOT.TCanvas(branch_name, branch_name, 800, 600)
@@ -9,7 +19,7 @@ def plot_and_save(tree, branch_name, variables):
 
 def main():
     # Load the ROOT file
-    f = ROOT.TFile.Open("test.root")
+    f = ROOT.TFile.Open("output_tvvj/tvvj_all_decayed.root")
     tree = f.Get("tree")
 
     # Define the branches and the variables in each branch
