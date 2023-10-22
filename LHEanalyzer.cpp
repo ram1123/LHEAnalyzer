@@ -1,22 +1,3 @@
-/*
- * =====================================================================================
- *
- *       Filename:  LHEanalyzer.cpp
- *
- *    Description:  This macro reades the lhe file and convert it into root file.
- *
- *        Version:  1.0
- *        Created:  Friday 02 January 2015 04:45:09  IST
- *       Revision:  none
- *       Compiler:  gcc
- *
- *         Author:  Nhan Viet Tran
- *	Edited By:  Ramkrishna Sharma
- *   Organization:  CERN
- *
- * =====================================================================================
- */
-
 #include "LHEF.h"
 #include "TROOT.h"
 #include "TFile.h"
@@ -25,6 +6,84 @@
 #include "TTree.h"
 #include <vector>
 #include <stdexcept> // for std::runtime_error
+#include <iostream>
+#include <string>
+
+#define LOG(level, msg) log(level, msg, __LINE__)
+
+enum class LogLevel
+{
+    DEBUG,
+    INFO,
+    WARNING,
+    ERROR
+};
+
+// This is the current logging level. Adjust this to change the verbosity of your logs.
+LogLevel CURRENT_LOG_LEVEL = LogLevel::INFO;
+
+// ANSI escape codes for text coloring
+const std::string RESET = "\033[0m";
+const std::string BLACK = "\033[30m";
+const std::string RED = "\033[31m";
+const std::string GREEN = "\033[32m";
+const std::string YELLOW = "\033[33m";
+const std::string BLUE = "\033[34m";
+const std::string MAGENTA = "\033[35m";
+const std::string CYAN = "\033[36m";
+const std::string WHITE = "\033[37m";
+const std::string BOLD = "\033[1m";
+
+void log(LogLevel level, const std::string &message, int line)
+{
+    if (level < CURRENT_LOG_LEVEL)
+    {
+        return;
+    }
+
+    std::string lineInfo = "[Line#" + std::to_string(line) + "]";
+
+    switch (level)
+    {
+    case LogLevel::DEBUG:
+        std::cout << CYAN << lineInfo << " [DEBUG] " << RESET << message << std::endl;
+        break;
+    case LogLevel::INFO:
+        std::cout << GREEN << lineInfo << " [INFO] " << RESET << message << std::endl;
+        break;
+    case LogLevel::WARNING:
+        std::cout << YELLOW << lineInfo << " [WARNING] " << RESET << message << std::endl;
+        break;
+    case LogLevel::ERROR:
+        std::cerr << BOLD << RED << lineInfo << " [ERROR] " << RESET << message << std::endl;
+        break;
+    }
+}
+
+// Function to set log level from command line argument
+void setLogLevelFromArg(const std::string &arg)
+{
+    if (arg == "DEBUG")
+    {
+        CURRENT_LOG_LEVEL = LogLevel::DEBUG;
+    }
+    else if (arg == "INFO")
+    {
+        CURRENT_LOG_LEVEL = LogLevel::INFO;
+    }
+    else if (arg == "WARNING")
+    {
+        CURRENT_LOG_LEVEL = LogLevel::WARNING;
+    }
+    else if (arg == "ERROR")
+    {
+        CURRENT_LOG_LEVEL = LogLevel::ERROR;
+    }
+    else
+    {
+        std::cerr << "Unknown log level: " << arg << ". Using default (DEBUG)." << std::endl;
+    }
+}
 
 const int STATUS_INCOMING = -1;
 const int STATUS_OUTGOING = 1;
@@ -117,11 +176,10 @@ void handleParticle(int iPart, LHEF::Reader &bkgReader)
     //             << "GM2 (Mother 2): " << bkgReader.hepeup.IDUP.at(grandmother2IndexForMother2) << std::endl;
     // }
 
-    if (Verbose && status > 0)
-    // if (status > 0)
-        std::cout << "particle PDGID " << particlePDG << "\t status: " << status << "\t mother: " << bkgReader.hepeup.IDUP.at(mother1Index) << ", " << bkgReader.hepeup.IDUP.at(mother2Index) << std::endl;
-    else if (Verbose)
-        std::cout << "particle PDGID " << particlePDG << "\t status: " << status << std::endl;
+    if (status > 0)
+        LOG(LogLevel::DEBUG, "particle PDGID " + std::to_string(particlePDG) + "\t status: " + std::to_string(status) + "\t mother: " + std::to_string(bkgReader.hepeup.IDUP.at(mother1Index)) + ", " + std::to_string(bkgReader.hepeup.IDUP.at(mother2Index)));
+    else
+        LOG(LogLevel::DEBUG, "particle PDGID " + std::to_string(particlePDG) + "\t status: " + std::to_string(status));
 
     double px = bkgReader.hepeup.PUP.at(iPart)[0];
     double py = bkgReader.hepeup.PUP.at(iPart)[1];
@@ -134,8 +192,7 @@ void handleParticle(int iPart, LHEF::Reader &bkgReader)
     if (status == STATUS_INCOMING)
     {
         PDG_IncomingParticles->push_back(particlePDG);
-        if (Verbose)
-            std::cout << "Incoming particle: " << particlePDG << std::endl;
+        LOG(LogLevel::DEBUG, "Incoming particle: " + std::to_string(particlePDG));
     }
 
     // Handle outgoing particles
@@ -146,15 +203,13 @@ void handleParticle(int iPart, LHEF::Reader &bkgReader)
         // Storing kinematics of leptons from Z boson
         if (abs(particlePDG) >= 11 && abs(particlePDG) <= 16)
         {
-            if (Verbose)
-                std::cout << "outgoing LEP PDGID: " << particlePDG << std::endl;
+            LOG(LogLevel::DEBUG, "Outgoing LEP PDGID: " + std::to_string(particlePDG));
+
             if (bkgReader.hepeup.IDUP.at(mother1Index) == PDG_Z_BOSON || bkgReader.hepeup.IDUP.at(mother2Index) == PDG_Z_BOSON)
             {
-                if (Verbose)
-                    std::cout << "outgoing LEPZ PDGID: " << particlePDG << std::endl;
-                PDG_OutgoingParticles_LEPZ->push_back(particlePDG);
+                LOG(LogLevel::DEBUG, "Outgoing LEP PDGID: " + std::to_string(particlePDG));
+                LOG(LogLevel::DEBUG, "leadingLeptonFromZ.pt: " + std::to_string(leadingLeptonFromZ.pt) + "\t" + std::to_string(particleMomentum.Pt()));
 
-                if (Verbose) std::cout << "leadingLeptonFromZ.pt: " << leadingLeptonFromZ.pt << "\t" << particleMomentum.Pt() << std::endl;
                 if (leadingLeptonFromZ.pt < particleMomentum.Pt())
                 {
                     subleadingLeptonFromZ = leadingLeptonFromZ;
@@ -164,9 +219,11 @@ void handleParticle(int iPart, LHEF::Reader &bkgReader)
                 {
                     subleadingLeptonFromZ = convertToKinematics(particleMomentum, particlePDG);
                 }
-                if (Verbose) std::cout << "L142# leading lepton from Z: pT: " << leadingLeptonFromZ.pt << "\t" << leadingLeptonFromZ.pdgID << std::endl;
-                if (Verbose) std::cout << "L142# sub-leading lepton from Z: pT: " << subleadingLeptonFromZ.pt << "\t" << subleadingLeptonFromZ.pdgID << std::endl;
-            }
+
+                LOG(LogLevel::DEBUG, "leading lepton from Z: pT: " + std::to_string(leadingLeptonFromZ.pt) + "\t" + std::to_string(leadingLeptonFromZ.pdgID));
+                LOG(LogLevel::DEBUG, "sub-leading lepton from Z: pT: " + std::to_string(subleadingLeptonFromZ.pt) + "\t" + std::to_string(subleadingLeptonFromZ.pdgID));
+
+                }
 
             // Storing kinematics of lepton and neutrino from W boson
             // if (abs(particlePDG) >= 11 && abs(particlePDG) <= 16)
@@ -259,8 +316,31 @@ void handleParticle(int iPart, LHEF::Reader &bkgReader)
     }
 }
 
+// A helper function to log particle information
+void logParticleInfo(const std::string &particleType, std::vector<int> *particles)
+{
+    std::stringstream ss;
+    ss << particleType << " (" << particles->size() << "): ";
+    for (int id : *particles)
+    {
+        ss << id << " ";
+    }
+    LOG(LogLevel::DEBUG, ss.str());
+}
+
 int main(int argc, char **argv)
 {
+    if (argc < 3) {
+        LOG(LogLevel::ERROR, "You must provide both an input and output file.");
+        return 1;
+    }
+
+    // Check if a log level is provided in the command line arguments
+    if (argc > 3)
+    {
+        setLogLevelFromArg(argv[3]);
+    }
+
     TFile file(argv[2], "RECREATE");
     file.SetCompressionLevel(2);
     TTree *tree = new TTree("tree", "Particles Info");
@@ -320,90 +400,41 @@ int main(int argc, char **argv)
         if (nEvents > EVENTSTORUN && DEBUG)
             break;
 
-        if (DEBUG)
-            std::cout << "\n\n====> BKG event " << nEvents << "\n";
+        LOG(LogLevel::DEBUG, "\n\n====> BKG event " + std::to_string(nEvents));
 
         // Loop over particles in the event
-        if (Verbose)
-            std::cout << "Total number of partices: " << bkgReader.hepeup.IDUP.size() << std::endl;
+        LOG(LogLevel::INFO, "Total number of particles: " + std::to_string(bkgReader.hepeup.IDUP.size()));
+
         for (int iPart = 0; iPart < bkgReader.hepeup.IDUP.size(); ++iPart)
         {
             handleParticle(iPart, bkgReader);
         }
 
-        if (Verbose) std::cout << "leading lepton from Z: pT: " << leadingLeptonFromZ.pt << "\t" << leadingLeptonFromZ.pdgID <<  std::endl;
-        if (Verbose) std::cout << "sub-leading lepton from Z: pT: " << subleadingLeptonFromZ.pt << "\t" << subleadingLeptonFromZ.pdgID <<  std::endl;
+        LOG(LogLevel::DEBUG, "leading lepton from Z: pT: " + std::to_string(leadingLeptonFromZ.pt) + "\t" + std::to_string(leadingLeptonFromZ.pdgID));
+        LOG(LogLevel::DEBUG, "sub-leading lepton from Z: pT: " + std::to_string(subleadingLeptonFromZ.pt) + "\t" + std::to_string(subleadingLeptonFromZ.pdgID));
 
-        // std::cout << " " << std::endl;
-        // std::cout << "Incoming particles: \t" << PDG_IncomingParticles->size() << std::endl;
-        // std::cout << "Intermediate particles\t" << PDG_IntermediateParticles->size() << std::endl;
-        // std::cout << "Outgoing particles\t" << PDG_OutgoingParticles->size() << std::endl;
-        // std::cout << "Outgoing LEPW\t" << PDG_OutgoingParticles_LEPW->size() << std::endl;
-        // std::cout << "Outgoing NeutrinoW\t" << PDG_OutgoingParticles_NeutrinoW->size() << std::endl;
-        // std::cout << "Outgoing LEPZ\t" << PDG_OutgoingParticles_LEPZ->size() << std::endl;
-        // std::cout << "Outgoing QuarkW\t" << PDG_OutgoingParticles_QuarkW->size() << std::endl;
-        // std::cout << "Outgoing QuarkTop\t" << PDG_OutgoingParticles_QuarkTop->size() << std::endl;
-        // std::cout << "Outgoing OtherQuark\t" << PDG_OutgoingParticles_OtherQuark->size() << std::endl;
 
-        // std::cout << "Outgoing LEPZ (" << PDG_OutgoingParticles_LEPZ->size() << "): ";
-        // for_each(PDG_OutgoingParticles_LEPZ->begin(), PDG_OutgoingParticles_LEPZ->end(), [](int id)
-        //          { std::cout << id << " "; });
-        // std::cout << std::endl;
-
-        if(Verbose)
+        // Usage in main code (or wherever this block resides)
+        if (Verbose)
         {
-        std::cout << "Incoming particles (" << PDG_IncomingParticles->size() << "): ";
-        for_each(PDG_IncomingParticles->begin(), PDG_IncomingParticles->end(), [](int id)
-                 { std::cout << id << " "; });
-        std::cout << std::endl;
-
-        std::cout << "Intermediate particles (" << PDG_IntermediateParticles->size() << "): ";
-        for_each(PDG_IntermediateParticles->begin(), PDG_IntermediateParticles->end(), [](int id)
-                 { std::cout << id << " "; });
-        std::cout << std::endl;
-
-        std::cout << "Outgoing particles (" << PDG_OutgoingParticles->size() << "): ";
-        for_each(PDG_OutgoingParticles->begin(), PDG_OutgoingParticles->end(), [](int id)
-                 { std::cout << id << " "; });
-        std::cout << std::endl;
-
-        std::cout << "Outgoing LEPW (" << PDG_OutgoingParticles_LEPW->size() << "): ";
-        for_each(PDG_OutgoingParticles_LEPW->begin(), PDG_OutgoingParticles_LEPW->end(), [](int id)
-                 { std::cout << id << " "; });
-        std::cout << std::endl;
-
-        std::cout << "Outgoing NeutrinoW (" << PDG_OutgoingParticles_NeutrinoW->size() << "): ";
-        for_each(PDG_OutgoingParticles_NeutrinoW->begin(), PDG_OutgoingParticles_NeutrinoW->end(), [](int id)
-                 { std::cout << id << " "; });
-        std::cout << std::endl;
-
-        std::cout << "Outgoing LEPZ (" << PDG_OutgoingParticles_LEPZ->size() << "): ";
-        for_each(PDG_OutgoingParticles_LEPZ->begin(), PDG_OutgoingParticles_LEPZ->end(), [](int id)
-                 { std::cout << id << " "; });
-        std::cout << std::endl;
-
-        std::cout << "Outgoing QuarkW (" << PDG_OutgoingParticles_QuarkW->size() << "): ";
-        for_each(PDG_OutgoingParticles_QuarkW->begin(), PDG_OutgoingParticles_QuarkW->end(), [](int id)
-                 { std::cout << id << " "; });
-        std::cout << std::endl;
-
-        std::cout << "Outgoing QuarkTop (" << PDG_OutgoingParticles_QuarkTop->size() << "): ";
-        for_each(PDG_OutgoingParticles_QuarkTop->begin(), PDG_OutgoingParticles_QuarkTop->end(), [](int id)
-                 { std::cout << id << " "; });
-        std::cout << std::endl;
-
-        std::cout << "Outgoing OtherQuark (" << PDG_OutgoingParticles_OtherQuark->size() << "): ";
-        for_each(PDG_OutgoingParticles_OtherQuark->begin(), PDG_OutgoingParticles_OtherQuark->end(), [](int id)
-                 { std::cout << id << " "; });
-        std::cout << std::endl;
+            logParticleInfo("Incoming particles", PDG_IncomingParticles);
+            logParticleInfo("Intermediate particles", PDG_IntermediateParticles);
+            logParticleInfo("Outgoing particles", PDG_OutgoingParticles);
+            logParticleInfo("Outgoing LEPW", PDG_OutgoingParticles_LEPW);
+            logParticleInfo("Outgoing NeutrinoW", PDG_OutgoingParticles_NeutrinoW);
+            logParticleInfo("Outgoing LEPZ", PDG_OutgoingParticles_LEPZ);
+            logParticleInfo("Outgoing QuarkW", PDG_OutgoingParticles_QuarkW);
+            logParticleInfo("Outgoing QuarkTop", PDG_OutgoingParticles_QuarkTop);
+            logParticleInfo("Outgoing OtherQuark", PDG_OutgoingParticles_OtherQuark);
         }
 
         // Fill the tree with the current event's data
         tree->Fill();
     }
 
-    std::cout << "Total Events = " << nEvents << std::endl;
-    std::cout << "Total number of events having > 1 forward quark: " << COUNTER << std::endl;
+    LOG(LogLevel::INFO, "Total Events = " + std::to_string(nEvents));
+    LOG(LogLevel::INFO, "Total number of events having > 1 forward quark: " + std::to_string(COUNTER));
+
     file.cd();
     tree->Write();
     file.Close();
