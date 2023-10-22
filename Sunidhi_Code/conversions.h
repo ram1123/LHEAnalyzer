@@ -2,79 +2,83 @@
 #ifndef conversions_h
 #define conversions_h
 
-float eta_to_theta (float eta)
-  {
-    return 2 * atan (exp (-1 * eta)) ;
-  }
-  
-float theta_to_eta (float theta)
-  {
-    return -1 * log (tan (0.5 * theta)) ;
-  }  
-  
-float polar_to_cart_r (float x, float y, float z)
+float eta_to_theta(float eta)
 {
-  return sqrt (x*x + y*y + z*z) ;
+    return 2 * atan(exp(-1 * eta));
 }
 
-float polar_to_cart_theta (float x, float y, float z)
+float theta_to_eta(float theta)
 {
-  return acos (z/polar_to_cart_r (x,y,z)) ;
+    return -1 * log(tan(0.5 * theta));
 }
 
-float polar_to_cart_phi (float x, float y, float z)
+float polar_to_cart_r(float x, float y, float z)
 {
-  return atan2 (y, x) ;
+    return sqrt(x * x + y * y + z * z);
 }
 
-float cart_to_polar_x (float r, float theta, float phi)
+float polar_to_cart_theta(float x, float y, float z)
 {
-  return r * sin (theta) * cos (phi) ;
+    return acos(z / polar_to_cart_r(x, y, z));
 }
 
-float cart_to_polar_y (float r, float theta, float phi)
+float polar_to_cart_phi(float x, float y, float z)
 {
-  return r * sin (theta) * sin (phi) ;
+    return atan2(y, x);
 }
 
-float cart_to_polar_z (float r, float theta, float phi)
+float cart_to_polar_x(float r, float theta, float phi)
 {
-  return r * cos (theta) ;
+    return r * sin(theta) * cos(phi);
 }
 
-float hep_to_polar_x (float t, float eta, float phi)
+float cart_to_polar_y(float r, float theta, float phi)
 {
-  return t * cos (phi) ;
+    return r * sin(theta) * sin(phi);
 }
 
-float hep_to_polar_y (float t, float eta, float phi)
+float cart_to_polar_z(float r, float theta, float phi)
 {
-  return t * sin (phi) ;
+    return r * cos(theta);
 }
 
-float hep_to_polar_z (float t, float eta, float phi)
+float hep_to_polar_x(float t, float eta, float phi)
 {
-  float theta = eta_to_theta (eta) ;
-  if (theta == 0) return 0. ;
-  else return t / tan (theta) ;
+    return t * cos(phi);
 }
 
-float deltaPhi (float phi1, float phi2)
+float hep_to_polar_y(float t, float eta, float phi)
 {
-  float result = phi1 - phi2;
-  while (result > 3.14159265) result -= 2 * 3.14159265;
-  while (result <= -3.14159265) result += 2 * 3.14159265;
-  return result;
+    return t * sin(phi);
 }
 
-float deltaR2 (float eta1, float phi1, float eta2, float phi2)
+float hep_to_polar_z(float t, float eta, float phi)
 {
-  return deltaPhi (phi1, phi2) * deltaPhi (phi1, phi2) + (eta1 - eta2) * (eta1 - eta2) ;
+    float theta = eta_to_theta(eta);
+    if (theta == 0)
+        return 0.;
+    else
+        return t / tan(theta);
 }
 
-float deltaR (float eta1, float phi1, float eta2, float phi2)
+float deltaPhi(float phi1, float phi2)
 {
-  return sqrt (deltaR2 (eta1, phi1, eta2, phi2)) ;
+    float result = phi1 - phi2;
+    while (result > 3.14159265)
+        result -= 2 * 3.14159265;
+    while (result <= -3.14159265)
+        result += 2 * 3.14159265;
+    return result;
+}
+
+float deltaR2(float eta1, float phi1, float eta2, float phi2)
+{
+    return deltaPhi(phi1, phi2) * deltaPhi(phi1, phi2) + (eta1 - eta2) * (eta1 - eta2);
+}
+
+float deltaR(float eta1, float phi1, float eta2, float phi2)
+{
+    return sqrt(deltaR2(eta1, phi1, eta2, phi2));
 }
 
 #endif
